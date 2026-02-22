@@ -425,7 +425,7 @@ const Admin = ({ mode = 'admin' }: AdminProps) => {
       // Check for manager roles first
       const managerRows = await withTimeout(fetchManagersByUserId(session.user.id), 4000, [] as ManagerRow[]);
       const uniqueRoles = Array.from(new Set(managerRows.map((m) => m.role))).filter(Boolean);
-      
+
       // If no manager roles, check if user is a team leader
       if (!uniqueRoles.length) {
         const teamLeaderResult = await withTimeout(fetchTeamLeaderByUserId(session.user.id), 4000, null);
@@ -436,7 +436,7 @@ const Admin = ({ mode = 'admin' }: AdminProps) => {
           setManagerRole('team_leader');
           return { ok: true };
         }
-        
+
         setIsAdminUser(false);
         setManagerRole(null);
         setManagerRolesForUser([]);
@@ -1898,38 +1898,54 @@ const Admin = ({ mode = 'admin' }: AdminProps) => {
           )}
           {activeTab === 'dashboard' && (
             <div className="space-y-4 sm:space-y-6">
-              <div className="elite-glass p-4 sm:p-8 flex flex-col sm:flex-row sm:justify-between sm:items-start gap-4">
+              <motion.div
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.6 }}
+                className="elite-glass p-4 sm:p-8 flex flex-col sm:flex-row sm:justify-between sm:items-start gap-4"
+              >
                 <div>
-                  <h1 className="text-2xl sm:text-3xl font-bold mb-2">Admin Dashboard</h1>
-                  <p className="text-[#6B5D4D] text-base">Manage registrations, schedules, scoring, and live updates.</p>
+                  <h1 className="text-2xl sm:text-3xl font-bold mb-2 text-[#1A1208]">Admin Dashboard</h1>
+                  <p className="text-[#4A3F2F] text-base font-medium">Manage registrations, schedules, scoring, and live updates.</p>
                 </div>
                 <button
                   onClick={() => {
                     loadAdminData({ preserveSelections: true });
                   }}
-                  className="flex items-center gap-2 px-3 py-2 sm:px-4 elite-glass !rounded-xl text-xs font-semibold hover:text-brand transition-colors whitespace-nowrap"
+                  className="flex items-center gap-2 px-3 py-2 sm:px-4 elite-glass !rounded-xl text-xs font-bold text-[#1A1208] hover:text-brand transition-colors whitespace-nowrap"
                 >
                   <RefreshCw size={14} /> Refresh
                 </button>
-              </div>
+              </motion.div>
               <div className="grid grid-cols-1 md:grid-cols-3 gap-4 sm:gap-6">
                 {[
                   { label: 'Institutes', value: institutes.length },
                   { label: 'Participants', value: participants.length },
                   { label: 'Events', value: events.length },
-                ].map((stat) => (
-                  <div key={stat.label} className="elite-glass p-4 sm:p-6">
-                    <div className="text-xs font-medium text-[#8B7D6B] uppercase tracking-wider mb-2">{stat.label}</div>
-                    <div className="text-3xl sm:text-4xl font-bold">{stat.value}</div>
-                  </div>
+                ].map((stat, i) => (
+                  <motion.div
+                    key={stat.label}
+                    initial={{ opacity: 0, y: 20 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ delay: 0.1 + i * 0.1, duration: 0.5 }}
+                    className="elite-glass p-4 sm:p-6"
+                  >
+                    <div className="text-xs font-black text-[#8B7D6B] uppercase tracking-wider mb-2">{stat.label}</div>
+                    <div className="text-3xl sm:text-4xl font-black text-[#1A1208]">{stat.value}</div>
+                  </motion.div>
                 ))}
               </div>
 
               {/* Live Leaderboard Preview */}
-              <div className="elite-glass p-6 sm:p-8">
+              <motion.div
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: 0.4, duration: 0.6 }}
+                className="elite-glass p-6 sm:p-8"
+              >
                 <div className="mb-8">
-                  <h2 className="text-2xl sm:text-3xl font-black mb-2 tracking-tight">Live Leaderboard</h2>
-                  <p className="text-[#A89880] text-sm">Real-time championship standings</p>
+                  <h2 className="text-2xl sm:text-3xl font-black mb-2 tracking-tight text-[#1A1208]">Live Leaderboard</h2>
+                  <p className="text-[#8B7D6B] text-sm font-bold uppercase tracking-widest">Real-time championship standings</p>
                 </div>
                 <div className="space-y-3">
                   {scores.length === 0 ? (
@@ -1995,7 +2011,7 @@ const Admin = ({ mode = 'admin' }: AdminProps) => {
                     })()
                   )}
                 </div>
-              </div>
+              </motion.div>
             </div>
           )}
 
@@ -2029,7 +2045,7 @@ const Admin = ({ mode = 'admin' }: AdminProps) => {
                     <div className="flex items-center gap-2">
                       <span className="text-xs text-[#A89880]">Active</span>
                       <button
-                        onClick={() => setEditModal({ type: 'institute', data: { ...inst, shortCode: inst.shortCode } })}
+                        onClick={() => setEditModal({ type: 'institute', data: { ...inst, shortCode: inst.shortCode } as any })}
                         className="p-2 hover:bg-[#1A1208]/[0.05] rounded-lg transition-colors text-[#6B5D4D] hover:text-[#1A1208]"
                         title="Edit institute"
                       >
@@ -3122,46 +3138,51 @@ const Admin = ({ mode = 'admin' }: AdminProps) => {
               </div>
 
               {/* Edit User Modal */}
+              {/* Edit User Modal */}
               {modalState?.type === 'edit-user' && (
                 <div className="fixed inset-0 bg-black/80 flex items-center justify-center z-50 p-4">
-                  <div className="elite-glass rounded-2xl max-w-md w-full p-6">
-                    <div className="flex items-center justify-between mb-4">
-                      <h3 className="text-lg font-bold">Edit Manager</h3>
+                  <motion.div
+                    initial={{ scale: 0.95, opacity: 0 }}
+                    animate={{ scale: 1, opacity: 1 }}
+                    className="bg-white/95 backdrop-blur-2xl border border-[#1A1208]/8 rounded-[32px] p-8 sm:p-10 max-w-md w-full relative"
+                  >
+                    <div className="flex items-center justify-between mb-8">
+                      <h3 className="text-xl sm:text-2xl font-black tracking-tighter uppercase">Edit Manager</h3>
                       <button
                         onClick={() => {
                           setModalState(null);
                           cancelEditManagerUser();
                         }}
-                        className="text-[#4A3F2F] hover:text-[#1A1208]"
+                        className="p-1 hover:bg-[#1A1208]/[0.05] rounded-lg transition-colors text-[#6B5D4D] hover:text-[#1A1208]"
                       >
                         <X size={20} />
                       </button>
                     </div>
 
-                    <div className="space-y-4 mb-6">
+                    <div className="space-y-6 mb-10">
                       <div>
-                        <label className="block text-xs font-bold text-[#4A3F2F] mb-2 uppercase tracking-wider">Email</label>
+                        <label className="text-[10px] font-black text-[#8B7D6B] uppercase tracking-[0.2em] mb-2 block">Email</label>
                         <input
                           value={editUserForm.email}
                           onChange={(e) => setEditUserForm((prev) => ({ ...prev, email: e.target.value }))}
                           type="email"
                           placeholder="new@email.com"
-                          className="w-full bg-[#1A1208]/[0.02] border border-[#1A1208]/8 rounded-xl px-4 py-2.5 text-sm focus:outline-none focus:border-brand/30 transition-colors"
+                          className="w-full bg-[#1A1208]/[0.03] border border-[#1A1208]/8 rounded-2xl px-5 py-4 text-sm font-medium focus:border-brand/50 focus:ring-2 focus:ring-brand/20 outline-none transition-all"
                         />
                       </div>
                       <div>
-                        <label className="block text-xs font-bold text-[#4A3F2F] mb-2 uppercase tracking-wider">New Password (optional)</label>
+                        <label className="text-[10px] font-black text-[#8B7D6B] uppercase tracking-[0.2em] mb-2 block">New Password (optional)</label>
                         <input
                           value={editUserForm.password}
                           onChange={(e) => setEditUserForm((prev) => ({ ...prev, password: e.target.value }))}
                           type="text"
                           placeholder="Leave blank to keep current"
-                          className="w-full bg-[#1A1208]/[0.02] border border-[#1A1208]/8 rounded-xl px-4 py-2.5 text-sm focus:outline-none focus:border-brand/30 transition-colors"
+                          className="w-full bg-[#1A1208]/[0.03] border border-[#1A1208]/8 rounded-2xl px-5 py-4 text-sm font-medium focus:border-brand/50 focus:ring-2 focus:ring-brand/20 outline-none transition-all"
                         />
                       </div>
                     </div>
 
-                    <div className="flex gap-2">
+                    <div className="flex flex-col sm:flex-row gap-3">
                       <button
                         disabled={updatingUserId === modalState?.userId}
                         onClick={() => {
@@ -3171,7 +3192,7 @@ const Admin = ({ mode = 'admin' }: AdminProps) => {
                           });
                           setModalState(null);
                         }}
-                        className="flex-1 btn-elite disabled:opacity-50"
+                        className="flex-1 bg-brand hover:bg-brand/90 text-white rounded-2xl py-4 font-black uppercase tracking-widest text-xs transition-all hover:scale-[1.02] active:scale-[0.98] shadow-lg shadow-brand/20 disabled:opacity-50"
                       >
                         {updatingUserId === modalState?.userId ? 'Saving...' : 'Save Changes'}
                       </button>
@@ -3180,38 +3201,42 @@ const Admin = ({ mode = 'admin' }: AdminProps) => {
                           setModalState(null);
                           cancelEditManagerUser();
                         }}
-                        className="flex-1 px-4 py-2.5 bg-[#1A1208]/[0.03] hover:bg-[#1A1208]/[0.05] rounded-xl font-bold text-[#1A1208] transition-colors"
+                        className="flex-1 bg-[#1A1208]/[0.05] hover:bg-[#1A1208]/[0.08] text-[#6B5D4D] rounded-2xl py-4 font-black uppercase tracking-widest text-xs transition-all hover:text-[#1A1208]"
                       >
                         Cancel
                       </button>
                     </div>
-                  </div>
+                  </motion.div>
                 </div>
               )}
 
               {/* Add Role Modal */}
               {modalState?.type === 'add-role' && (
                 <div className="fixed inset-0 bg-black/80 flex items-center justify-center z-50 p-4">
-                  <div className="elite-glass rounded-2xl max-w-md w-full p-6">
-                    <div className="flex items-center justify-between mb-4">
+                  <motion.div
+                    initial={{ scale: 0.95, opacity: 0 }}
+                    animate={{ scale: 1, opacity: 1 }}
+                    className="bg-white/95 backdrop-blur-2xl border border-[#1A1208]/8 rounded-[32px] p-8 sm:p-10 max-w-md w-full relative"
+                  >
+                    <div className="flex items-center justify-between mb-8">
                       <div>
-                        <h3 className="text-lg font-bold">Add Role</h3>
-                        <p className="text-xs text-[#4A3F2F] mt-1">{modalState.email}</p>
+                        <h3 className="text-xl sm:text-2xl font-black tracking-tighter uppercase">Add Role</h3>
+                        <p className="text-[10px] font-bold text-[#A89880] mt-1 uppercase tracking-[0.1em]">{modalState.email}</p>
                       </div>
                       <button
                         onClick={() => setModalState(null)}
-                        className="text-[#4A3F2F] hover:text-[#1A1208]"
+                        className="p-1 hover:bg-[#1A1208]/[0.05] rounded-lg transition-colors text-[#6B5D4D] hover:text-[#1A1208]"
                       >
                         <X size={20} />
                       </button>
                     </div>
 
-                    <div className="mb-6">
-                      <label className="block text-xs font-bold text-[#4A3F2F] mb-2 uppercase tracking-wider">Available Roles</label>
+                    <div className="mb-10">
+                      <label className="text-[10px] font-black text-[#8B7D6B] uppercase tracking-[0.2em] mb-2 block">Available Roles</label>
                       <select
                         value={roleDraftByUserId[modalState.userId] || modalState.availableRoles?.[0] || ''}
                         onChange={(e) => setRoleDraftByUserId((prev) => ({ ...prev, [modalState.userId]: e.target.value }))}
-                        className="w-full bg-[#1A1208]/[0.02] border border-[#1A1208]/8 rounded-xl px-4 py-2.5 text-sm text-[#1A1208] focus:outline-none focus:border-brand/30 transition-colors"
+                        className="w-full bg-[#1A1208]/[0.03] border border-[#1A1208]/8 rounded-2xl px-5 py-4 text-sm font-medium focus:border-brand/50 focus:ring-2 focus:ring-brand/20 outline-none transition-all text-[#1A1208]"
                         style={{ colorScheme: 'light' }}
                       >
                         {(modalState.availableRoles || []).map((role) => (
@@ -3222,7 +3247,7 @@ const Admin = ({ mode = 'admin' }: AdminProps) => {
                       </select>
                     </div>
 
-                    <div className="flex gap-2">
+                    <div className="flex flex-col sm:flex-row gap-3">
                       <button
                         disabled={addingRoleForUserId === modalState.userId}
                         onClick={() => {
@@ -3233,18 +3258,18 @@ const Admin = ({ mode = 'admin' }: AdminProps) => {
                           });
                           setModalState(null);
                         }}
-                        className="flex-1 btn-elite disabled:opacity-50"
+                        className="flex-1 bg-brand hover:bg-brand/90 text-white rounded-2xl py-4 font-black uppercase tracking-widest text-xs transition-all hover:scale-[1.02] active:scale-[0.98] shadow-lg shadow-brand/20 disabled:opacity-50"
                       >
                         {addingRoleForUserId === modalState.userId ? 'Adding...' : 'Add Role'}
                       </button>
                       <button
                         onClick={() => setModalState(null)}
-                        className="flex-1 px-4 py-2.5 bg-[#1A1208]/[0.03] hover:bg-[#1A1208]/[0.05] rounded-xl font-bold text-[#1A1208] transition-colors"
+                        className="flex-1 bg-[#1A1208]/[0.05] hover:bg-[#1A1208]/[0.08] text-[#6B5D4D] rounded-2xl py-4 font-black uppercase tracking-widest text-xs transition-all hover:text-[#1A1208]"
                       >
                         Cancel
                       </button>
                     </div>
-                  </div>
+                  </motion.div>
                 </div>
               )}
             </div>
@@ -3521,26 +3546,48 @@ const Admin = ({ mode = 'admin' }: AdminProps) => {
             <motion.div
               initial={{ scale: 0.95, opacity: 0 }}
               animate={{ scale: 1, opacity: 1 }}
-              className="bg-gradient-to-b from-white/10 to-white/5 backdrop-blur-xl border border-[#1A1208]/8 rounded-2xl p-6 max-w-sm w-full"
+              className="bg-white/95 backdrop-blur-2xl border border-[#1A1208]/8 rounded-[32px] p-8 sm:p-10 max-w-md w-full relative"
+              onClick={(e) => e.stopPropagation()}
             >
-              <h3 className="text-lg font-black tracking-tighter mb-2">Delete {deleteConfirm.type}?</h3>
-              <p className="text-sm text-[#6B5D4D] mb-4">
-                Are you sure you want to delete <span className="font-bold text-[#1A1208]">{deleteConfirm.name}</span>? This action cannot be undone.
-              </p>
-              <div className="flex gap-3 justify-end">
+              <div className="flex items-center justify-between mb-8">
+                <h3 className="text-xl sm:text-2xl font-black tracking-tighter uppercase text-red-500">
+                  Delete {deleteConfirm.type}
+                </h3>
                 <button
                   onClick={() => setDeleteConfirm(null)}
-                  disabled={isDeleting}
-                  className="px-4 py-2 rounded-lg border border-[#1A1208]/8 hover:border-[#1A1208]/8 text-[#6B5D4D] hover:text-[#1A1208] transition-colors disabled:opacity-50"
+                  className="p-1 hover:bg-[#1A1208]/[0.05] rounded-lg transition-colors text-[#6B5D4D] hover:text-[#1A1208]"
                 >
-                  Cancel
+                  <X size={20} />
+                </button>
+              </div>
+
+              <div className="mb-10">
+                <p className="text-sm font-medium text-[#4A3F2F] leading-relaxed">
+                  Are you sure you want to delete <span className="font-black text-[#1A1208]">{deleteConfirm.name}</span>?
+                  <br />
+                  <span className="text-[10px] font-black uppercase tracking-widest text-[#8B7D6B] mt-2 block">
+                    This action cannot be undone.
+                  </span>
+                </p>
+              </div>
+
+              <div className="flex flex-col sm:flex-row gap-3">
+                <button
+                  onClick={async () => {
+                    if (!deleteConfirm) return;
+                    setIsDeleting(true);
+                    await handleDelete();
+                  }}
+                  disabled={isDeleting}
+                  className="flex-1 bg-red-500 hover:bg-red-600 text-white rounded-2xl py-4 font-black uppercase tracking-widest text-xs transition-all hover:scale-[1.02] active:scale-[0.98] shadow-lg shadow-red-500/20 disabled:opacity-50"
+                >
+                  {isDeleting ? 'Deleting...' : 'Confirm Delete'}
                 </button>
                 <button
-                  onClick={handleDelete}
-                  disabled={isDeleting}
-                  className="px-4 py-2 rounded-lg bg-red-500/20 hover:bg-red-500/30 border border-red-500/30 text-red-400 hover:text-red-300 transition-colors disabled:opacity-50 font-semibold"
+                  onClick={() => setDeleteConfirm(null)}
+                  className="flex-1 bg-[#1A1208]/[0.05] hover:bg-[#1A1208]/[0.08] text-[#6B5D4D] rounded-2xl py-4 font-black uppercase tracking-widest text-xs transition-all hover:text-[#1A1208]"
                 >
-                  {isDeleting ? 'Deleting...' : 'Delete'}
+                  Cancel
                 </button>
               </div>
             </motion.div>
@@ -3552,48 +3599,77 @@ const Admin = ({ mode = 'admin' }: AdminProps) => {
             <motion.div
               initial={{ scale: 0.95, opacity: 0 }}
               animate={{ scale: 1, opacity: 1 }}
-              className="bg-gradient-to-b from-white/10 to-white/5 backdrop-blur-xl border border-red-500/30 rounded-2xl p-6 max-w-sm w-full"
+              className="bg-white/95 backdrop-blur-2xl border border-[#1A1208]/8 rounded-[32px] p-8 sm:p-10 max-w-md w-full relative"
+              onClick={(e) => e.stopPropagation()}
             >
-              <h3 className="text-lg font-black tracking-tighter mb-2">Delete selected participants?</h3>
-              <p className="text-sm text-[#6B5D4D] mb-4">
-                This will delete <span className="font-bold text-[#1A1208]">{selectedParticipantIds.size}</span> participant(s). This action cannot be undone.
-              </p>
-              <div className="flex gap-3 justify-end">
+              <div className="flex items-center justify-between mb-8">
+                <h3 className="text-xl sm:text-2xl font-black tracking-tighter uppercase text-red-500">
+                  Bulk Delete
+                </h3>
                 <button
                   onClick={() => setSelectedDeleteConfirm(false)}
-                  disabled={isBulkDeleting}
-                  className="px-4 py-2 rounded-lg border border-[#1A1208]/8 hover:border-[#1A1208]/8 text-[#6B5D4D] hover:text-[#1A1208] transition-colors disabled:opacity-50"
+                  className="p-1 hover:bg-[#1A1208]/[0.05] rounded-lg transition-colors text-[#6B5D4D] hover:text-[#1A1208]"
                 >
-                  Cancel
+                  <X size={20} />
                 </button>
+              </div>
+
+              <div className="mb-10">
+                <p className="text-sm font-medium text-[#4A3F2F] leading-relaxed">
+                  Are you sure you want to delete <span className="font-black text-[#1A1208]">{selectedParticipantIds.size}</span> selected participant(s)?
+                  <br />
+                  <span className="text-[10px] font-black uppercase tracking-widest text-[#8B7D6B] mt-2 block">
+                    This action cannot be undone.
+                  </span>
+                </p>
+              </div>
+
+              <div className="flex flex-col sm:flex-row gap-3">
                 <button
                   onClick={handleBulkDelete}
                   disabled={isBulkDeleting}
-                  className="px-4 py-2 rounded-lg bg-red-500/20 hover:bg-red-500/30 border border-red-500/30 text-red-300 hover:text-red-200 transition-colors disabled:opacity-50 font-semibold"
+                  className="flex-1 bg-red-500 hover:bg-red-600 text-white rounded-2xl py-4 font-black uppercase tracking-widest text-xs transition-all hover:scale-[1.02] active:scale-[0.98] shadow-lg shadow-red-500/20 disabled:opacity-50"
                 >
-                  {isBulkDeleting ? 'Deleting...' : 'Delete'}
+                  {isBulkDeleting ? 'Deleting...' : 'Confirm Bulk Delete'}
+                </button>
+                <button
+                  onClick={() => setSelectedDeleteConfirm(false)}
+                  className="flex-1 bg-[#1A1208]/[0.05] hover:bg-[#1A1208]/[0.08] text-[#6B5D4D] rounded-2xl py-4 font-black uppercase tracking-widest text-xs transition-all hover:text-[#1A1208]"
+                >
+                  Cancel
                 </button>
               </div>
             </motion.div>
           </div>
         )}
 
-        {/* Edit Modal */}
+        {/* Edit Modals */}
         {editModal && (
-          <div className="fixed inset-0 bg-black/80 flex items-center justify-center z-[100] p-4">
+          <div className="fixed inset-0 bg-black/80 flex items-center justify-center z-50 p-4 overflow-y-auto no-scrollbar">
             <motion.div
               initial={{ scale: 0.95, opacity: 0 }}
               animate={{ scale: 1, opacity: 1 }}
-              className="bg-gradient-to-b from-[#1a1a1a] to-[#0a0a0a] border border-[#1A1208]/8 rounded-2xl p-6 max-w-lg w-full max-h-[90vh] overflow-y-auto no-scrollbar"
+              className="bg-white/95 backdrop-blur-2xl border border-[#1A1208]/8 rounded-[32px] p-6 sm:p-10 max-w-2xl w-full relative my-8"
+              onClick={(e) => e.stopPropagation()}
             >
-              <h3 className="text-lg font-bold mb-4">Edit {editModal.type.charAt(0).toUpperCase() + editModal.type.slice(1)}</h3>
+              <div className="flex items-center justify-between mb-8">
+                <h3 className="text-xl sm:text-2xl font-black tracking-tighter uppercase">
+                  Edit {editModal.type.replace('_', ' ')}
+                </h3>
+                <button
+                  onClick={() => setEditModal(null)}
+                  className="p-1 hover:bg-[#1A1208]/[0.05] rounded-lg transition-colors text-[#6B5D4D] hover:text-[#1A1208]"
+                >
+                  <X size={20} />
+                </button>
+              </div>
               <form onSubmit={handleUpdate} className="space-y-4">
-                {editModal.type === 'institute' && (
+                {editModal.type === 'institute' && editModal.data && (
                   <>
                     <div>
                       <label className="block text-xs text-[#4A3F2F] mb-1">Name</label>
                       <input
-                        value={editModal.data.name}
+                        value={editModal.data.name || ''}
                         onChange={(e) => setEditModal({ ...editModal, data: { ...editModal.data, name: e.target.value } })}
                         className="w-full bg-[#1A1208]/[0.03] border border-[#1A1208]/8 rounded-xl px-3 py-2 text-sm"
                       />
@@ -3601,7 +3677,7 @@ const Admin = ({ mode = 'admin' }: AdminProps) => {
                     <div>
                       <label className="block text-xs text-[#4A3F2F] mb-1">Short Code</label>
                       <input
-                        value={editModal.data.shortCode}
+                        value={editModal.data.shortCode || ''}
                         onChange={(e) => setEditModal({ ...editModal, data: { ...editModal.data, shortCode: e.target.value } })}
                         className="w-full bg-[#1A1208]/[0.03] border border-[#1A1208]/8 rounded-xl px-3 py-2 text-sm"
                       />
@@ -3609,22 +3685,22 @@ const Admin = ({ mode = 'admin' }: AdminProps) => {
                   </>
                 )}
 
-                {editModal.type === 'participant' && (
+                {editModal.type === 'participant' && editModal.data && (
                   <>
                     <input
-                      value={editModal.data.full_name}
+                      value={editModal.data.full_name || ''}
                       onChange={(e) => setEditModal({ ...editModal, data: { ...editModal.data, full_name: e.target.value } })}
                       placeholder="Full Name"
                       className="w-full bg-[#1A1208]/[0.03] border border-[#1A1208]/8 rounded-xl px-3 py-2 text-sm"
                     />
                     <input
-                      value={editModal.data.enrollment_no}
+                      value={editModal.data.enrollment_no || ''}
                       onChange={(e) => setEditModal({ ...editModal, data: { ...editModal.data, enrollment_no: e.target.value } })}
                       placeholder="Enrollment No"
                       className="w-full bg-[#1A1208]/[0.03] border border-[#1A1208]/8 rounded-xl px-3 py-2 text-sm"
                     />
                     <select
-                      value={editModal.data.event_id}
+                      value={editModal.data.event_id || ''}
                       onChange={(e) => setEditModal({ ...editModal, data: { ...editModal.data, event_id: e.target.value } })}
                       className="w-full bg-[#1A1208]/[0.03] border border-[#1A1208]/8 rounded-xl px-3 py-2 text-sm text-[#1A1208]"
                       style={{ colorScheme: 'light' }}
@@ -3634,7 +3710,7 @@ const Admin = ({ mode = 'admin' }: AdminProps) => {
                       ))}
                     </select>
                     <select
-                      value={editModal.data.institute_id}
+                      value={editModal.data.institute_id || ''}
                       onChange={(e) => setEditModal({ ...editModal, data: { ...editModal.data, institute_id: e.target.value } })}
                       className="w-full bg-[#1A1208]/[0.03] border border-[#1A1208]/8 rounded-xl px-3 py-2 text-sm text-[#1A1208]"
                       style={{ colorScheme: 'light' }}
@@ -3646,10 +3722,10 @@ const Admin = ({ mode = 'admin' }: AdminProps) => {
                   </>
                 )}
 
-                {editModal.type === 'schedule' && (
+                {editModal.type === 'schedule' && editModal.data && (
                   <>
                     <select
-                      value={editModal.data.day}
+                      value={editModal.data.day || ''}
                       onChange={(e) => setEditModal({ ...editModal, data: { ...editModal.data, day: e.target.value } })}
                       className="w-full bg-[#1A1208]/[0.03] border border-[#1A1208]/8 rounded-xl px-3 py-2 text-sm text-[#1A1208]"
                       style={{ colorScheme: 'light' }}
@@ -3673,12 +3749,12 @@ const Admin = ({ mode = 'admin' }: AdminProps) => {
                   </>
                 )}
 
-                {editModal.type === 'team_leader' && (
+                {editModal.type === 'team_leader' && editModal.data && (
                   <>
                     <div>
                       <label className="block text-xs text-[#4A3F2F] mb-1">Name</label>
                       <input
-                        value={editModal.data.name}
+                        value={editModal.data.name || ''}
                         onChange={(e) => setEditModal({ ...editModal, data: { ...editModal.data, name: e.target.value } })}
                         className="w-full bg-[#1A1208]/[0.03] border border-[#1A1208]/8 rounded-xl px-3 py-2 text-sm"
                       />
@@ -3686,7 +3762,7 @@ const Admin = ({ mode = 'admin' }: AdminProps) => {
                     <div>
                       <label className="block text-xs text-[#4A3F2F] mb-1">Email</label>
                       <input
-                        value={editModal.data.email}
+                        value={editModal.data.email || ''}
                         onChange={(e) => setEditModal({ ...editModal, data: { ...editModal.data, email: e.target.value } })}
                         className="w-full bg-[#1A1208]/[0.03] border border-[#1A1208]/8 rounded-xl px-3 py-2 text-sm"
                       />
@@ -3694,7 +3770,7 @@ const Admin = ({ mode = 'admin' }: AdminProps) => {
                     <div>
                       <label className="block text-xs text-[#4A3F2F] mb-1">Phone</label>
                       <input
-                        value={editModal.data.phone}
+                        value={editModal.data.phone || ''}
                         onChange={(e) => setEditModal({ ...editModal, data: { ...editModal.data, phone: e.target.value } })}
                         className="w-full bg-[#1A1208]/[0.03] border border-[#1A1208]/8 rounded-xl px-3 py-2 text-sm"
                       />
@@ -3702,7 +3778,7 @@ const Admin = ({ mode = 'admin' }: AdminProps) => {
                     <div>
                       <label className="block text-xs text-[#4A3F2F] mb-1">Institute</label>
                       <select
-                        value={editModal.data.institute_id}
+                        value={editModal.data.institute_id || ''}
                         onChange={(e) => setEditModal({ ...editModal, data: { ...editModal.data, institute_id: e.target.value } })}
                         className="w-full bg-[#1A1208]/[0.03] border border-[#1A1208]/8 rounded-xl px-3 py-2 text-sm text-[#1A1208]"
                         style={{ colorScheme: 'light' }}
@@ -3715,20 +3791,20 @@ const Admin = ({ mode = 'admin' }: AdminProps) => {
                   </>
                 )}
 
-                <div className="flex gap-3 justify-end pt-4">
-                  <button
-                    type="button"
-                    onClick={() => setEditModal(null)}
-                    className="px-4 py-2 rounded-lg border border-[#1A1208]/8 text-[#6B5D4D] hover:text-[#1A1208]"
-                  >
-                    Cancel
-                  </button>
+                <div className="flex flex-col sm:flex-row gap-3 pt-6">
                   <button
                     type="submit"
-                    className="btn-elite px-4 py-2 rounded-lg text-sm"
+                    className="flex-1 bg-brand hover:bg-brand/90 text-white rounded-2xl py-4 font-black uppercase tracking-widest text-xs transition-all hover:scale-[1.02] active:scale-[0.98] shadow-lg shadow-brand/20"
                     disabled={isUpdating}
                   >
                     {isUpdating ? 'Saving...' : 'Save Changes'}
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => setEditModal(null)}
+                    className="flex-1 bg-[#1A1208]/[0.05] hover:bg-[#1A1208]/[0.08] text-[#6B5D4D] rounded-2xl py-4 font-black uppercase tracking-widest text-xs transition-all hover:text-[#1A1208]"
+                  >
+                    Cancel
                   </button>
                 </div>
               </form>
@@ -3738,16 +3814,22 @@ const Admin = ({ mode = 'admin' }: AdminProps) => {
 
         {/* Group Detail Modal */}
         {groupDetailModal && (
-          <div className="fixed inset-0 bg-black/80 flex items-center justify-center z-50 p-4">
+          <div className="fixed inset-0 bg-black/80 flex items-center justify-center z-50 p-4 overflow-y-auto no-scrollbar">
             <motion.div
               initial={{ scale: 0.95, opacity: 0 }}
               animate={{ scale: 1, opacity: 1 }}
-              className="bg-gradient-to-b from-[#1a1a1a] to-[#0a0a0a] border border-[#1A1208]/8 rounded-2xl p-6 max-w-lg w-full max-h-[90vh] overflow-y-auto no-scrollbar"
+              className="bg-white/95 backdrop-blur-2xl border border-[#1A1208]/8 rounded-[32px] p-8 sm:p-10 max-w-2xl w-full relative my-8"
+              onClick={(e) => e.stopPropagation()}
             >
-              <div className="flex items-center justify-between mb-4">
-                <h3 className="text-lg font-bold">
-                  {eventById.get(groupDetailModal.eventId)?.name} - {instituteById.get(groupDetailModal.instituteId)?.name}
-                </h3>
+              <div className="flex items-center justify-between mb-8">
+                <div>
+                  <h3 className="text-xl sm:text-2xl font-black tracking-tighter uppercase whitespace-normal break-words">
+                    {eventById.get(groupDetailModal.eventId)?.name}
+                  </h3>
+                  <p className="text-[10px] font-black text-[#8B7D6B] uppercase tracking-[0.2em] mt-1">
+                    {instituteById.get(groupDetailModal.instituteId)?.name}
+                  </p>
+                </div>
                 <button
                   onClick={() => setGroupDetailModal(null)}
                   className="p-1 hover:bg-[#1A1208]/[0.05] rounded-lg transition-colors text-[#6B5D4D] hover:text-[#1A1208]"
@@ -3756,33 +3838,43 @@ const Admin = ({ mode = 'admin' }: AdminProps) => {
                 </button>
               </div>
 
-              <div className="space-y-3">
+              <div className="space-y-4 mb-8">
                 {participants
                   .filter(
                     (p) => p.event_id === groupDetailModal.eventId && p.institute_id === groupDetailModal.instituteId
                   )
                   .sort((a, b) => a.full_name.localeCompare(b.full_name))
                   .map((member) => (
-                    <div key={member.id} className="bg-[#1A1208]/[0.02] border border-[#1A1208]/4 rounded-xl p-3">
-                      <div className="flex items-center justify-between gap-2">
+                    <div key={member.id} className="group bg-[#1A1208]/[0.03] border border-[#1A1208]/8 rounded-[24px] p-5 transition-all hover:bg-[#1A1208]/[0.05]">
+                      <div className="flex items-center justify-between gap-4">
                         <div className="flex-1 min-w-0">
-                          <div className="font-semibold text-sm text-[#1A1208]">{member.full_name}</div>
-                          <div className="text-xs text-[#4A3F2F] mt-1">
-                            {member.enrollment_no || 'N/A'} • {member.role}
+                          <div className="font-black text-base text-[#1A1208]">{member.full_name}</div>
+                          <div className="flex flex-wrap gap-x-3 gap-y-1 mt-1">
+                            <span className="text-[10px] font-black uppercase tracking-wider text-brand">
+                              {member.role}
+                            </span>
+                            <span className="text-[10px] font-bold uppercase tracking-wider text-[#8B7D6B]">
+                              {member.enrollment_no || 'No Enrollment'}
+                            </span>
                           </div>
-                          {member.email && (
-                            <div className="text-xs text-[#4A3F2F] mt-0.5">{member.email}</div>
-                          )}
-                          {member.phone && (
-                            <div className="text-xs text-[#4A3F2F]">{member.phone}</div>
+                          {(member.email || member.phone) && (
+                            <div className="mt-3 pt-3 border-t border-[#1A1208]/4 flex flex-wrap gap-x-4 gap-y-1">
+                              {member.email && (
+                                <span className="text-xs font-medium text-[#6B5D4D]">{member.email}</span>
+                              )}
+                              {member.phone && (
+                                <span className="text-xs font-medium text-[#6B5D4D]">{member.phone}</span>
+                              )}
+                            </div>
                           )}
                         </div>
                         <button
                           type="button"
                           onClick={() => {
                             setEditModal({ type: 'participant', data: member });
+                            setGroupDetailModal(null);
                           }}
-                          className="px-3 py-1.5 bg-brand/20 hover:bg-brand/30 border border-brand/30 rounded-lg text-xs text-brand hover:text-brand/90 transition-colors font-semibold whitespace-nowrap"
+                          className="px-4 py-2 rounded-xl bg-white border border-[#1A1208]/8 shadow-sm text-[10px] font-black uppercase tracking-wider text-[#6B5D4D] hover:text-brand transition-all hover:scale-105 active:scale-95 whitespace-nowrap"
                         >
                           Edit
                         </button>
@@ -3791,18 +3883,12 @@ const Admin = ({ mode = 'admin' }: AdminProps) => {
                   ))}
               </div>
 
-              {participants.filter(
-                (p) => p.event_id === groupDetailModal.eventId && p.institute_id === groupDetailModal.instituteId
-              ).length === 0 && (
-                  <div className="text-[#6B5D4D] text-sm text-center py-4">No members found for this group.</div>
-                )}
-
-              <div className="flex gap-3 justify-end pt-4 mt-4 border-t border-[#1A1208]/8">
+              <div className="pt-2">
                 <button
                   onClick={() => setGroupDetailModal(null)}
-                  className="px-4 py-2 rounded-lg border border-[#1A1208]/8 text-[#6B5D4D] hover:text-[#1A1208] transition-colors"
+                  className="w-full bg-[#1A1208]/[0.05] hover:bg-[#1A1208]/[0.08] text-[#6B5D4D] rounded-2xl py-4 font-black uppercase tracking-widest text-xs transition-all hover:text-[#1A1208]"
                 >
-                  Close
+                  Close Details
                 </button>
               </div>
             </motion.div>
@@ -3811,67 +3897,79 @@ const Admin = ({ mode = 'admin' }: AdminProps) => {
 
         {/* Password Modal */}
         {passwordModal.type && (
-          <div className="fixed inset-0 bg-black/80 flex items-center justify-center z-50 p-4">
+          <div className="fixed inset-0 bg-black/80 flex items-center justify-center z-50 p-4 overflow-y-auto no-scrollbar">
             <motion.div
               initial={{ scale: 0.95, opacity: 0 }}
               animate={{ scale: 1, opacity: 1 }}
-              className="bg-gradient-to-b from-white/10 to-white/5 backdrop-blur-xl border border-[#1A1208]/8 rounded-2xl p-6 max-w-sm w-full"
+              className="bg-white/95 backdrop-blur-2xl border border-[#1A1208]/8 rounded-[32px] p-8 sm:p-10 max-w-md w-full relative"
+              onClick={(e) => e.stopPropagation()}
             >
-              <div className="flex items-center gap-3 mb-4">
-                <div className="w-10 h-10 rounded-full bg-brand/10 border border-brand/20 flex items-center justify-center">
-                  <Lock size={20} className="text-brand" />
-                </div>
-                <div>
-                  <h3 className="text-lg font-bold">
-                    {passwordModal.type === 'access' ? 'Leaderboard Access' : 'Publish Confirmation'}
-                  </h3>
-                  <p className="text-xs text-[#4A3F2F]">Enter password to continue</p>
-                </div>
+              <div className="flex items-center justify-between mb-8">
+                <h3 className="text-xl sm:text-2xl font-black tracking-tighter uppercase">
+                  {passwordModal.type === 'access' ? 'Leaderboard Access' : 'Publish Access'}
+                </h3>
+                <button
+                  onClick={() => setPasswordModal({ type: null, password: '' })}
+                  className="p-1 hover:bg-[#1A1208]/[0.05] rounded-lg transition-colors text-[#6B5D4D] hover:text-[#1A1208]"
+                >
+                  <X size={20} />
+                </button>
               </div>
+
               <form
                 onSubmit={(e) => {
                   e.preventDefault();
                   handlePasswordSubmit();
                 }}
+                className="space-y-6"
               >
-                <div className="relative mb-4">
-                  <input
-                    type={showModalPassword ? 'text' : 'password'}
-                    value={passwordModal.password}
-                    onChange={(e) => setPasswordModal({ ...passwordModal, password: e.target.value })}
-                    placeholder="Enter password"
-                    className="w-full bg-[#1A1208]/[0.03] border border-[#1A1208]/8 rounded-xl px-4 py-3 pr-12 text-sm focus:border-brand/50 focus:ring-2 focus:ring-brand/20 outline-none"
-                    autoFocus
-                  />
-                  <button
-                    type="button"
-                    onClick={() => setShowModalPassword(!showModalPassword)}
-                    className="absolute right-4 top-1/2 -translate-y-1/2 text-[#6B5D4D] hover:text-[#6B5D4D] transition-colors"
-                  >
-                    {showModalPassword ? <EyeOff size={16} /> : <Eye size={16} />}
-                  </button>
+                <div>
+                  <label className="text-[10px] font-black text-[#8B7D6B] uppercase tracking-[0.2em] mb-2 block">
+                    Security Password
+                  </label>
+                  <div className="relative">
+                    <input
+                      type={showModalPassword ? 'text' : 'password'}
+                      value={passwordModal.password}
+                      onChange={(e) => setPasswordModal({ ...passwordModal, password: e.target.value })}
+                      placeholder="Enter administrative password"
+                      className="w-full bg-[#1A1208]/[0.03] border border-[#1A1208]/8 rounded-2xl px-5 py-4 pr-12 text-sm focus:border-brand/50 focus:ring-2 focus:ring-brand/20 outline-none font-medium transition-all"
+                      autoFocus
+                    />
+                    <button
+                      type="button"
+                      onClick={() => setShowModalPassword(!showModalPassword)}
+                      className="absolute right-4 top-1/2 -translate-y-1/2 text-[#6B5D4D]/50 hover:text-brand transition-colors"
+                    >
+                      {showModalPassword ? <EyeOff size={18} /> : <Eye size={18} />}
+                    </button>
+                  </div>
+                  <p className="mt-2 text-[10px] font-medium text-[#A89880] uppercase tracking-wider">
+                    Administrative access required to proceed
+                  </p>
                 </div>
-                <div className="flex gap-3 justify-end">
+
+                <div className="flex flex-col sm:flex-row gap-3 pt-4">
+                  <button
+                    type="submit"
+                    className="flex-1 bg-brand hover:bg-brand/90 text-white rounded-2xl py-4 font-black uppercase tracking-widest text-xs transition-all hover:scale-[1.02] active:scale-[0.98] shadow-lg shadow-brand/20"
+                  >
+                    Confirm Access
+                  </button>
                   <button
                     type="button"
                     onClick={() => setPasswordModal({ type: null, password: '' })}
-                    className="px-4 py-2 rounded-lg border border-[#1A1208]/8 hover:border-[#1A1208]/8 text-[#6B5D4D] hover:text-[#1A1208] transition-colors text-sm"
+                    className="flex-1 bg-[#1A1208]/[0.05] hover:bg-[#1A1208]/[0.08] text-[#6B5D4D] rounded-2xl py-4 font-black uppercase tracking-widest text-xs transition-all hover:text-[#1A1208]"
                   >
                     Cancel
-                  </button>
-                  <button
-                    type="submit"
-                    className="px-4 py-2 rounded-lg bg-brand hover:bg-brand/90 text-white font-semibold transition-colors text-sm"
-                  >
-                    Confirm
                   </button>
                 </div>
               </form>
             </motion.div>
           </div>
         )}
-      </div>
-    </div>
+      </div >
+    </div >
   );
 };
 
