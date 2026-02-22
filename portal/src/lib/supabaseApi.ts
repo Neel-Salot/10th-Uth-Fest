@@ -595,11 +595,45 @@ export const updateTeamLeader = async (id: string, payload: Partial<Omit<TeamLea
 };
 
 export const deleteTeamLeader = async (id: string) => {
-  const { error } = await supabase
+  // First, get the user_id associated with this team leader
+  const { data: teamLeader, error: fetchError } = await supabase
     .from('team_leaders')
-    .delete()
-    .eq('id', id);
-  if (error) throw error;
+    .select('user_id')
+    .eq('id', id)
+    .single();
+  
+  if (fetchError) throw fetchError;
+  
+  // Use RPC function to delete both team_leader and auth user
+  // If RPC doesn't exist, fall back to just deleting team_leader record
+  try {
+    const { error: rpcError } = await supabase.rpc('delete_team_leader', {
+      p_team_leader_id: id,
+      p_user_id: teamLeader?.user_id
+    });
+    if (rpcError) throw rpcError;
+  } catch (rpcErr: any) {
+    // If RPC function doesn't exist, just delete the team_leader record
+    if (rpcErr?.message?.includes('function') || rpcErr?.code === '42883') {
+      // Delete team_leader record only
+      const { error } = await supabase
+        .from('team_leaders')
+        .delete()
+        .eq('id', id);
+      if (error) throw error;
+      
+      // Try to delete auth user if possible (will fail with anon key, but that's ok)
+      if (teamLeader?.user_id) {
+        try {
+          await supabase.auth.admin.deleteUser(teamLeader.user_id);
+        } catch (authErr) {
+          console.warn('Could not delete auth user (requires service_role key):', authErr);
+        }
+      }
+    } else {
+      throw rpcErr;
+    }
+  }
 };
 
 export const resetTeamLeaderPassword = async (userId: string, newPassword: string) => {
