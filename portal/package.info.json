@@ -1,0 +1,16 @@
+{
+  "name": "@10th-uth-fest/portal",
+  "description": "10th UTH Fest Event Management Portal",
+  "keywords": ["event", "management", "festival"],
+  "engines": {
+    "node": ">=18.0.0",
+    "npm": ">=9.0.0"
+  },
+  "homepage": "https://yourdomain.com",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/yourusername/portal"
+  },
+  "author": "Your Name",
+  "license": "MIT"
+}
