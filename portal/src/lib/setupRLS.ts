@@ -32,6 +32,7 @@ ALTER TABLE public.scores DISABLE ROW LEVEL SECURITY;
 ALTER TABLE public.scoring_config DISABLE ROW LEVEL SECURITY;
 ALTER TABLE public.live_status DISABLE ROW LEVEL SECURITY;
 ALTER TABLE public.managers DISABLE ROW LEVEL SECURITY;
+ALTER TABLE public.team_leaders DISABLE ROW LEVEL SECURITY;
 
 -- Students table (if exists)
 DO $$ BEGIN
@@ -44,7 +45,7 @@ END $$;
 SELECT tablename, rowsecurity as has_rls
 FROM pg_tables
 WHERE schemaname = 'public'
-AND tablename IN ('participants', 'institutes', 'schedule', 'events', 'scores', 'scoring_config', 'event_helpers', 'live_status', 'managers')
+AND tablename IN ('participants', 'institutes', 'schedule', 'events', 'scores', 'scoring_config', 'event_helpers', 'live_status', 'managers', 'team_leaders')
 ORDER BY tablename;
 `;
 
@@ -61,6 +62,7 @@ ALTER TABLE public.scores ENABLE ROW LEVEL SECURITY;
 ALTER TABLE public.scoring_config ENABLE ROW LEVEL SECURITY;
 ALTER TABLE public.live_status ENABLE ROW LEVEL SECURITY;
 ALTER TABLE public.managers ENABLE ROW LEVEL SECURITY;
+ALTER TABLE public.team_leaders ENABLE ROW LEVEL SECURITY;
 
 -- ===== STEP 2: DROP EXISTING POLICIES (Clean slate) =====
 -- PARTICIPANTS
@@ -111,6 +113,18 @@ DROP POLICY IF EXISTS "self_select_managers" ON public.managers;
 DROP POLICY IF EXISTS "admin_insert_managers" ON public.managers;
 DROP POLICY IF EXISTS "admin_update_managers" ON public.managers;
 DROP POLICY IF EXISTS "admin_delete_managers" ON public.managers;
+
+-- TEAM_LEADERS
+DROP POLICY IF EXISTS "public_select_team_leaders" ON public.team_leaders;
+DROP POLICY IF EXISTS "authenticated_insert_team_leaders" ON public.team_leaders;
+DROP POLICY IF EXISTS "authenticated_update_team_leaders" ON public.team_leaders;
+DROP POLICY IF EXISTS "users_update_own_team_leaders" ON public.team_leaders;
+DROP POLICY IF EXISTS "authenticated_delete_team_leaders" ON public.team_leaders;
+DROP POLICY IF EXISTS "Allow public read on team_leaders" ON public.team_leaders;
+DROP POLICY IF EXISTS "Allow authenticated insert on team_leaders" ON public.team_leaders;
+DROP POLICY IF EXISTS "Allow authenticated update on team_leaders" ON public.team_leaders;
+DROP POLICY IF EXISTS "Allow users to update own team_leader" ON public.team_leaders;
+DROP POLICY IF EXISTS "Allow authenticated delete on team_leaders" ON public.team_leaders;
 
 -- LIVE_STATUS
 DROP POLICY IF EXISTS "public_select_live_status" ON public.live_status;
@@ -252,6 +266,26 @@ CREATE POLICY "public_update_live_status" ON public.live_status
 CREATE POLICY "public_delete_live_status" ON public.live_status
     FOR DELETE USING (auth.role() IN ('authenticated', 'service_role'));
 
+-- ===== TEAM_LEADERS TABLE =====
+-- What it does: Team leader accounts linked to institutes
+-- Public can see: Yes (needed for institute coordination)
+-- Authenticated can modify: Yes
+-- Users can update own record: Yes
+CREATE POLICY "public_select_team_leaders" ON public.team_leaders
+    FOR SELECT USING (true);
+
+CREATE POLICY "authenticated_insert_team_leaders" ON public.team_leaders
+    FOR INSERT WITH CHECK (auth.role() = 'authenticated');
+
+CREATE POLICY "authenticated_update_team_leaders" ON public.team_leaders
+    FOR UPDATE USING (auth.role() = 'authenticated');
+
+CREATE POLICY "users_update_own_team_leaders" ON public.team_leaders
+    FOR UPDATE USING (auth.uid() = user_id) WITH CHECK (auth.uid() = user_id);
+
+CREATE POLICY "authenticated_delete_team_leaders" ON public.team_leaders
+    FOR DELETE USING (auth.role() = 'authenticated');
+
 -- ===== MANAGERS TABLE =====
 -- What it does: Stores admin-created managers with role-based access
 -- Admins can see/manage: Yes
@@ -303,7 +337,7 @@ SELECT
     rowsecurity as rls_enabled
 FROM pg_tables
 WHERE schemaname = 'public'
-AND tablename IN ('participants', 'institutes', 'schedule', 'events', 'scores', 'scoring_config', 'event_helpers', 'live_status', 'managers')
+AND tablename IN ('participants', 'institutes', 'schedule', 'events', 'scores', 'scoring_config', 'event_helpers', 'live_status', 'managers', 'team_leaders')
 ORDER BY tablename;
 
 -- ===== CHECK 2: How many policies exist on each table? =====

@@ -595,44 +595,29 @@ export const updateTeamLeader = async (id: string, payload: Partial<Omit<TeamLea
 };
 
 export const deleteTeamLeader = async (id: string) => {
-  // First, get the user_id associated with this team leader
-  const { data: teamLeader, error: fetchError } = await supabase
+  // First, get the user_id to delete auth user too
+  const { data: teamLeader } = await supabase
     .from('team_leaders')
     .select('user_id')
     .eq('id', id)
     .single();
   
-  if (fetchError) throw fetchError;
+  const userId = teamLeader?.user_id;
   
-  // Use RPC function to delete both team_leader and auth user
-  // If RPC doesn't exist, fall back to just deleting team_leader record
-  try {
-    const { error: rpcError } = await supabase.rpc('delete_team_leader', {
-      p_team_leader_id: id,
-      p_user_id: teamLeader?.user_id
-    });
-    if (rpcError) throw rpcError;
-  } catch (rpcErr: any) {
-    // If RPC function doesn't exist, just delete the team_leader record
-    if (rpcErr?.message?.includes('function') || rpcErr?.code === '42883') {
-      // Delete team_leader record only
-      const { error } = await supabase
-        .from('team_leaders')
-        .delete()
-        .eq('id', id);
-      if (error) throw error;
-      
-      // Try to delete auth user if possible (will fail with anon key, but that's ok)
-      if (teamLeader?.user_id) {
-        try {
-          await supabase.auth.admin.deleteUser(teamLeader.user_id);
-        } catch (authErr) {
-          console.warn('Could not delete auth user (requires service_role key):', authErr);
-        }
-      }
-    } else {
-      throw rpcErr;
-    }
+  // Try using RPC function first (requires running the SQL script)
+  const { error: rpcError } = await supabase.rpc('delete_team_leader', {
+    p_team_leader_id: id,
+    p_user_id: userId
+  });
+  
+  // If RPC doesn't exist or fails, just delete the team_leader record
+  if (rpcError) {
+    console.warn('RPC delete failed, falling back to direct delete:', rpcError.message);
+    const { error } = await supabase
+      .from('team_leaders')
+      .delete()
+      .eq('id', id);
+    if (error) throw error;
   }
 };
 
