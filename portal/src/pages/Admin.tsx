@@ -2141,7 +2141,7 @@ const Admin = ({ mode = 'admin' }: AdminProps) => {
                       <option value="accompanist" style={{ color: '#1A1208', backgroundColor: '#FEFCF8' }}>Accompanist</option>
                     </select>
                   </div>
-                  <div className="text-xs text-[#A89880]">
+                  <div className="text-xs text-[#4A3F2F]">
                     Showing {filteredParticipants.length} of {participants.length} participant(s).
                     {participantEventId || participantInstituteId || participantRole ? ` Filters: ${bulkDeleteSummary}.` : ''}
                   </div>
@@ -2152,7 +2152,7 @@ const Admin = ({ mode = 'admin' }: AdminProps) => {
                 <div className="elite-glass p-4 sm:p-8">
                   <div className="flex items-center justify-between mb-4">
                     <h3 className="text-lg font-bold">Group Events (Event → Institute)</h3>
-                    <span className="text-xs text-[#A89880]">Grouped view</span>
+                    <span className="text-xs text-[#4A3F2F]">Grouped view</span>
                   </div>
                   <div className="space-y-4">
                     {events.filter((event) => event.is_team).map((event) => {
@@ -2177,11 +2177,11 @@ const Admin = ({ mode = 'admin' }: AdminProps) => {
                                     >
                                       {instituteById.get(instituteId)?.name}
                                     </button>
-                                    <div className="text-xs text-[#A89880]">
+                                    <div className="text-xs text-[#4A3F2F]">
                                       {participantCount} participant(s) • {accompanistCount} accompanist(s)
                                     </div>
                                   </div>
-                                  <div className="mt-2 space-y-1 text-xs text-[#8B7D6B]">
+                                  <div className="mt-2 space-y-1 text-xs text-[#4A3F2F]">
                                     {members
                                       .slice()
                                       .sort((a, b) => a.full_name.localeCompare(b.full_name))
@@ -2201,7 +2201,7 @@ const Admin = ({ mode = 'admin' }: AdminProps) => {
                                           <button
                                             type="button"
                                             onClick={() => setEditModal({ type: 'participant', data: member })}
-                                            className="text-[10px] text-[#8B7D6B] hover:text-[#1A1208] flex-shrink-0"
+                                            className="text-[10px] text-[#4A3F2F] hover:text-[#1A1208] flex-shrink-0"
                                           >
                                             Edit
                                           </button>
@@ -2219,7 +2219,7 @@ const Admin = ({ mode = 'admin' }: AdminProps) => {
                       const eventGroups = groupedFilteredParticipants.get(event.id);
                       return !eventGroups || eventGroups.size === 0;
                     }) ? (
-                      <div className="text-[#B8A890] text-sm">No group participants match the filters.</div>
+                      <div className="text-[#6B5D4D] text-sm">No group participants match the filters.</div>
                     ) : null}
                   </div>
                 </div>
@@ -2227,7 +2227,7 @@ const Admin = ({ mode = 'admin' }: AdminProps) => {
                 <div className={`elite-glass p-4 sm:p-8 ${participantEventId && eventById.get(participantEventId)?.is_team ? 'hidden' : ''}`}>
                   <div className="flex items-center justify-between mb-4">
                     <h3 className="text-lg font-bold">Solo Events (Event → Institute)</h3>
-                    <span className="text-xs text-[#A89880]">Grouped view</span>
+                    <span className="text-xs text-[#4A3F2F]">Grouped view</span>
                   </div>
                   <div className="space-y-4">
                     {events.filter((event) => !event.is_team).map((event) => {
@@ -2247,7 +2247,7 @@ const Admin = ({ mode = 'admin' }: AdminProps) => {
                             {Array.from(soloEventGroups.entries()).map(([instituteId, members]) => (
                               <div key={instituteId} className="border border-[#1A1208]/4 rounded-xl p-3">
                                 <div className="font-semibold text-sm mb-2 text-[#1A1208]">{instituteById.get(instituteId)?.name}</div>
-                                <div className="space-y-1 text-xs text-[#8B7D6B]">
+                                <div className="space-y-1 text-xs text-[#4A3F2F]">
                                   {members
                                     .slice()
                                     .sort((a, b) => a.full_name.localeCompare(b.full_name))
@@ -2268,7 +2268,7 @@ const Admin = ({ mode = 'admin' }: AdminProps) => {
                                           <button
                                             type="button"
                                             onClick={() => setEditModal({ type: 'participant', data: member })}
-                                            className="text-[10px] text-[#8B7D6B] hover:text-[#1A1208]"
+                                            className="text-[10px] text-[#4A3F2F] hover:text-[#1A1208]"
                                           >
                                             Edit
                                           </button>
@@ -2293,7 +2293,7 @@ const Admin = ({ mode = 'admin' }: AdminProps) => {
                         });
                       return soloEventGroups.size === 0;
                     }) ? (
-                      <div className="text-[#B8A890] text-sm">No solo participants match the filters.</div>
+                      <div className="text-[#6B5D4D] text-sm">No solo participants match the filters.</div>
                     ) : null}
                   </div>
                 </div>
@@ -2331,7 +2331,7 @@ const Admin = ({ mode = 'admin' }: AdminProps) => {
               <CategoryTabs />
               <div className="space-y-2 sm:space-y-3">
                 {eventParticipants.length === 0 ? (
-                  <div className="text-[#B8A890] text-sm">No participants registered for this event yet.</div>
+                  <div className="text-[#6B5D4D] text-sm">No participants registered for this event yet.</div>
                 ) : (
                   eventParticipants.map((participant, index) => (
                     <div key={participant.id} className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 bg-[#1A1208]/[0.02] border border-[#1A1208]/4 rounded-2xl px-3 sm:px-4 py-3">
@@ -2341,7 +2341,7 @@ const Admin = ({ mode = 'admin' }: AdminProps) => {
                         </div>
                         <div className="min-w-0">
                           <div className="font-semibold text-base truncate">{participant.full_name}</div>
-                          <div className="text-xs text-[#8B7D6B] mt-0.5">
+                          <div className="text-xs text-[#4A3F2F] mt-0.5">
                             {instituteById.get(participant.institute_id)?.shortCode}
                           </div>
                         </div>
@@ -2380,7 +2380,7 @@ const Admin = ({ mode = 'admin' }: AdminProps) => {
                     <div className="grid grid-cols-2 gap-2 sm:gap-3">
                       {(['first', 'second', 'third'] as const).map((key) => (
                         <div key={key}>
-                          <label className="text-xs text-[#8B7D6B] font-medium capitalize block mb-1">
+                          <label className="text-xs text-[#4A3F2F] font-medium capitalize block mb-1">
                             {key === 'first' ? 'Winner' : key === 'second' ? '1st Runner Up' : '2nd Runner Up'}
                           </label>
                           <input
@@ -2478,7 +2478,7 @@ const Admin = ({ mode = 'admin' }: AdminProps) => {
                     placeholder="Venue"
                     className="w-full bg-[#1A1208]/[0.02] border border-[#1A1208]/8 rounded-2xl px-4 sm:px-5 py-2 sm:py-3 text-sm"
                   />
-                  <label className="flex items-center gap-3 text-xs sm:text-sm text-[#8B7D6B]">
+                  <label className="flex items-center gap-3 text-xs sm:text-sm text-[#4A3F2F]">
                     <input
                       type="checkbox"
                       checked={scheduleForm.isPlaceholder}
@@ -2505,7 +2505,7 @@ const Admin = ({ mode = 'admin' }: AdminProps) => {
                     const matchesEvent = !selectedEventId || s.event_id === selectedEventId;
                     return matchesCategory && matchesEvent;
                   }).length === 0 ? (
-                    <div className="text-[#B8A890] text-sm">No schedule entries yet.</div>
+                    <div className="text-[#6B5D4D] text-sm">No schedule entries yet.</div>
                   ) : (
                     scheduleEntries
                       .filter(s => {
@@ -2519,11 +2519,11 @@ const Admin = ({ mode = 'admin' }: AdminProps) => {
                           <div className="flex justify-between items-start gap-2">
                             <div className="min-w-0 flex-1">
                               <div className="font-semibold text-base mb-1">{eventById.get(entry.event_id)?.name}</div>
-                              <div className="text-xs text-[#8B7D6B]">
+                              <div className="text-xs text-[#4A3F2F]">
                                 {entry.day} • {entry.start_time ?? 'TBD'} - {entry.end_time ?? 'TBD'} • {entry.venue ?? 'TBD'}
                               </div>
                               {entry.is_placeholder ? (
-                                <div className="text-xs font-medium text-[#A89880] mt-1">Placeholder</div>
+                                <div className="text-xs font-medium text-[#4A3F2F] mt-1">Placeholder</div>
                               ) : null}
                             </div>
                             <div className="flex gap-2">
@@ -2592,10 +2592,10 @@ const Admin = ({ mode = 'admin' }: AdminProps) => {
                   <div key={event.id} className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 bg-[#1A1208]/[0.02] border border-[#1A1208]/4 rounded-2xl px-3 sm:px-4 py-3">
                     <div className="min-w-0">
                       <div className="font-semibold text-base truncate">{event.name}</div>
-                      <div className="text-xs text-[#8B7D6B] mt-0.5">{event.category}</div>
+                      <div className="text-xs text-[#4A3F2F] mt-0.5">{event.category}</div>
                     </div>
                     <div className="flex items-center gap-2 sm:gap-3">
-                      <Hash size={12} className="sm:w-[14px] sm:h-[14px] text-[#C8B8A0]" />
+                      <Hash size={12} className="sm:w-[14px] sm:h-[14px] text-[#6B5D4D]" />
                       <input
                         value={helperPins[event.id] ?? ''}
                         onChange={(e) => setHelperPins((prev) => ({ ...prev, [event.id]: e.target.value }))}
@@ -2787,7 +2787,7 @@ const Admin = ({ mode = 'admin' }: AdminProps) => {
                   >
                     {isSeedingTLs ? 'Seeding...' : 'Seed All 30 Team Leaders'}
                   </button>
-                  <span className="text-xs text-[#A89880]">Creates all team leaders from the preset list (skips existing). No emails sent.</span>
+                  <span className="text-xs text-[#4A3F2F]">Creates all team leaders from the preset list (skips existing). No emails sent.</span>
                 </div>
               </div>
 
@@ -2838,7 +2838,7 @@ const Admin = ({ mode = 'admin' }: AdminProps) => {
 
                   if (filtered.length === 0) {
                     return (
-                      <div className="text-[#B8A890] text-sm text-center py-8">
+                      <div className="text-[#6B5D4D] text-sm text-center py-8">
                         {teamLeaders.length === 0
                           ? 'No team leaders found. Create one above or run the seed.'
                           : `No results for "${tlSearch}"`}
@@ -2854,8 +2854,8 @@ const Admin = ({ mode = 'admin' }: AdminProps) => {
                           <div key={tl.id} className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 bg-[#1A1208]/[0.02] border border-[#1A1208]/4 rounded-2xl px-4 sm:px-5 py-3 sm:py-4">
                             <div className="min-w-0">
                               <div className="font-bold text-base truncate">{tl.name}</div>
-                              <div className="text-xs text-[#8B7D6B] mt-0.5">{tl.email} • {tl.phone || 'No phone'}</div>
-                              <div className="text-xs text-[#A89880] mt-0.5">
+                              <div className="text-xs text-[#4A3F2F] mt-0.5">{tl.email} • {tl.phone || 'No phone'}</div>
+                              <div className="text-xs text-[#4A3F2F] mt-0.5">
                                 {inst ? `${inst.name} (${inst.shortCode})` : tl.institute_id}
                                 {tl.must_set_password && (
                                   <span className="ml-2 px-2 py-0.5 bg-yellow-500/10 border border-yellow-500/20 rounded text-yellow-400 text-[10px] font-bold">Pending Password</span>
@@ -2917,8 +2917,8 @@ const Admin = ({ mode = 'admin' }: AdminProps) => {
               {/* Create Manager Form */}
               <div className="elite-glass p-4 sm:p-8">
                 <h2 className="text-xl sm:text-2xl font-bold mb-4">Role Assign</h2>
-                <p className="text-[#A89880] text-sm mb-2">Create managers with limited access to specific admin sections.</p>
-                <p className="text-[#B8A890] text-xs mb-6">If the email already exists, this adds another role to the same person.</p>
+                <p className="text-[#4A3F2F] text-sm mb-2">Create managers with limited access to specific admin sections.</p>
+                <p className="text-[#6B5D4D] text-xs mb-6">If the email already exists, this adds another role to the same person.</p>
 
                 {managerError && (
                   <div className="bg-red-500/10 border border-red-500/20 rounded-xl px-4 py-3 mb-4 text-sm text-red-400 flex items-start gap-2">
@@ -2952,7 +2952,7 @@ const Admin = ({ mode = 'admin' }: AdminProps) => {
                   </div>
 
                   <div className="bg-[#1A1208]/[0.02] border border-[#1A1208]/8 rounded-2xl px-4 sm:px-5 py-3">
-                    <label className="text-xs font-medium text-[#8B7D6B] uppercase tracking-wider mb-3 block">
+                    <label className="text-xs font-medium text-[#4A3F2F] uppercase tracking-wider mb-3 block">
                       Select Roles (Choose one or more)
                     </label>
                     <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
@@ -2976,7 +2976,7 @@ const Admin = ({ mode = 'admin' }: AdminProps) => {
                         </label>
                       ))}
                     </div>
-                    <div className="mt-2 text-xs text-[#A89880]">
+                    <div className="mt-2 text-xs text-[#4A3F2F]">
                       {managerForm.roles.length} role(s) selected
                     </div>
                   </div>
@@ -2996,7 +2996,7 @@ const Admin = ({ mode = 'admin' }: AdminProps) => {
                 <div className="flex items-center justify-between mb-6">
                   <div>
                     <h3 className="text-lg font-bold">Managers</h3>
-                    <div className="text-xs text-[#A89880] mt-1">
+                    <div className="text-xs text-[#4A3F2F] mt-1">
                       {groupedManagers.length} user{groupedManagers.length !== 1 ? 's' : ''} with {managers.length} role{managers.length !== 1 ? 's' : ''}
                     </div>
                   </div>
@@ -3019,7 +3019,7 @@ const Admin = ({ mode = 'admin' }: AdminProps) => {
                 </div>
 
                 {groupedManagers.length === 0 ? (
-                  <div className="text-[#B8A890] text-sm text-center py-12">No managers created yet.</div>
+                  <div className="text-[#6B5D4D] text-sm text-center py-12">No managers created yet.</div>
                 ) : (
                   <div className="overflow-x-auto no-scrollbar">
                     <table className="w-full text-sm">
@@ -3132,7 +3132,7 @@ const Admin = ({ mode = 'admin' }: AdminProps) => {
                           setModalState(null);
                           cancelEditManagerUser();
                         }}
-                        className="text-[#A89880] hover:text-[#1A1208]"
+                        className="text-[#4A3F2F] hover:text-[#1A1208]"
                       >
                         <X size={20} />
                       </button>
@@ -3140,7 +3140,7 @@ const Admin = ({ mode = 'admin' }: AdminProps) => {
 
                     <div className="space-y-4 mb-6">
                       <div>
-                        <label className="block text-xs font-bold text-[#A89880] mb-2 uppercase tracking-wider">Email</label>
+                        <label className="block text-xs font-bold text-[#4A3F2F] mb-2 uppercase tracking-wider">Email</label>
                         <input
                           value={editUserForm.email}
                           onChange={(e) => setEditUserForm((prev) => ({ ...prev, email: e.target.value }))}
@@ -3150,7 +3150,7 @@ const Admin = ({ mode = 'admin' }: AdminProps) => {
                         />
                       </div>
                       <div>
-                        <label className="block text-xs font-bold text-[#A89880] mb-2 uppercase tracking-wider">New Password (optional)</label>
+                        <label className="block text-xs font-bold text-[#4A3F2F] mb-2 uppercase tracking-wider">New Password (optional)</label>
                         <input
                           value={editUserForm.password}
                           onChange={(e) => setEditUserForm((prev) => ({ ...prev, password: e.target.value }))}
@@ -3196,18 +3196,18 @@ const Admin = ({ mode = 'admin' }: AdminProps) => {
                     <div className="flex items-center justify-between mb-4">
                       <div>
                         <h3 className="text-lg font-bold">Add Role</h3>
-                        <p className="text-xs text-[#A89880] mt-1">{modalState.email}</p>
+                        <p className="text-xs text-[#4A3F2F] mt-1">{modalState.email}</p>
                       </div>
                       <button
                         onClick={() => setModalState(null)}
-                        className="text-[#A89880] hover:text-[#1A1208]"
+                        className="text-[#4A3F2F] hover:text-[#1A1208]"
                       >
                         <X size={20} />
                       </button>
                     </div>
 
                     <div className="mb-6">
-                      <label className="block text-xs font-bold text-[#A89880] mb-2 uppercase tracking-wider">Available Roles</label>
+                      <label className="block text-xs font-bold text-[#4A3F2F] mb-2 uppercase tracking-wider">Available Roles</label>
                       <select
                         value={roleDraftByUserId[modalState.userId] || modalState.availableRoles?.[0] || ''}
                         onChange={(e) => setRoleDraftByUserId((prev) => ({ ...prev, [modalState.userId]: e.target.value }))}
@@ -3258,12 +3258,12 @@ const Admin = ({ mode = 'admin' }: AdminProps) => {
               <div className="elite-glass p-4 sm:p-6 mb-6">
                 <div>
                   <h3 className="text-lg font-bold mb-2">Scoreboard Settings</h3>
-                  <p className="text-[#A89880] text-sm mb-4">Control the visibility of the Scoreboard across the portal.</p>
+                  <p className="text-[#4A3F2F] text-sm mb-4">Control the visibility of the Scoreboard across the portal.</p>
                 </div>
                 <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 sm:gap-4 bg-[#1A1208]/[0.02] border border-[#1A1208]/4 rounded-2xl px-3 sm:px-4 py-3 sm:py-4">
                   <div>
                     <div className="font-bold text-sm">Scoreboard Publication Status</div>
-                    <div className="text-xs text-[#8B7D6B] mt-1">
+                    <div className="text-xs text-[#4A3F2F] mt-1">
                       {scoreboardPublished ? '✓ Published - Visible to all users' : '✗ Unpublished - Hidden from navbar'}
                     </div>
                   </div>
@@ -3272,7 +3272,7 @@ const Admin = ({ mode = 'admin' }: AdminProps) => {
                     onClick={handleToggleScoreboard}
                     className={`px-3 sm:px-4 py-2 elite-glass !rounded-xl text-xs font-bold whitespace-nowrap transition-all ${scoreboardPublished
                       ? 'bg-green-500/20 text-green-400 border-green-500/30'
-                      : 'bg-[#1A1208]/[0.03] text-[#A89880] border-[#1A1208]/8 hover:text-[#1A1208]'
+                      : 'bg-[#1A1208]/[0.03] text-[#4A3F2F] border-[#1A1208]/8 hover:text-[#1A1208]'
                       }`}
                   >
                     {scoreboardPublished ? 'Published' : 'Unpublished'}
@@ -3292,7 +3292,7 @@ const Admin = ({ mode = 'admin' }: AdminProps) => {
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
                     {/* Step 1: Category */}
                     <div>
-                      <label className="block text-xs font-medium text-[#8B7D6B] mb-1">Event Type</label>
+                      <label className="block text-xs font-medium text-[#4A3F2F] mb-1">Event Type</label>
                       <select
                         value={scoreFormCategory}
                         onChange={(e) => { setScoreFormCategory(e.target.value); setScoreForm({ ...scoreForm, eventId: '', instituteId: '', participantId: '', points: 0, rank: 0 }); }}
@@ -3308,7 +3308,7 @@ const Admin = ({ mode = 'admin' }: AdminProps) => {
                     </div>
                     {/* Step 2: Event (filtered by category) */}
                     <div>
-                      <label className="block text-xs font-medium text-[#8B7D6B] mb-1">Event</label>
+                      <label className="block text-xs font-medium text-[#4A3F2F] mb-1">Event</label>
                       <select
                         value={scoreForm.eventId}
                         onChange={(e) => setScoreForm({ ...scoreForm, eventId: e.target.value, instituteId: '', participantId: '', points: 0, rank: 0 })}
@@ -3330,7 +3330,7 @@ const Admin = ({ mode = 'admin' }: AdminProps) => {
                     {scoreForm.eventId && (
                       <>
                         <div className="md:col-span-2">
-                          <label className="block text-xs font-medium text-[#8B7D6B] mb-1">
+                          <label className="block text-xs font-medium text-[#4A3F2F] mb-1">
                             {eventById.get(scoreForm.eventId)?.is_team ? 'Winning Team (Institute)' : 'Winning Participant'}
                           </label>
                           {eventById.get(scoreForm.eventId)?.is_team ? (
@@ -3371,7 +3371,7 @@ const Admin = ({ mode = 'admin' }: AdminProps) => {
                         </div>
 
                         <div>
-                          <label className="block text-xs font-medium text-[#8B7D6B] mb-1">Position</label>
+                          <label className="block text-xs font-medium text-[#4A3F2F] mb-1">Position</label>
                           <select
                             value={scoreForm.rank}
                             onChange={(e) => {
@@ -3395,12 +3395,12 @@ const Admin = ({ mode = 'admin' }: AdminProps) => {
                         </div>
 
                         <div>
-                          <label className="block text-xs font-medium text-[#8B7D6B] mb-1">Points (Auto)</label>
+                          <label className="block text-xs font-medium text-[#4A3F2F] mb-1">Points (Auto)</label>
                           <input
                             type="number"
                             value={scoreForm.points}
                             readOnly
-                            className="w-full bg-[#1A1208]/[0.03] border border-[#1A1208]/8 rounded-xl px-3 py-2 text-sm text-[#8B7D6B] cursor-not-allowed"
+                            className="w-full bg-[#1A1208]/[0.03] border border-[#1A1208]/8 rounded-xl px-3 py-2 text-sm text-[#4A3F2F] cursor-not-allowed"
                           />
                         </div>
                       </>
@@ -3449,7 +3449,7 @@ const Admin = ({ mode = 'admin' }: AdminProps) => {
                             ? participants.find(p => p.id === score.participant_id)?.full_name
                             : instituteById.get(score.institute_id)?.name}
                         </div>
-                        <div className="text-xs text-[#8B7D6B]">
+                        <div className="text-xs text-[#4A3F2F]">
                           {score.rank === 1 ? 'Winner' : score.rank === 2 ? '1st Runner Up' : score.rank === 3 ? '2nd Runner Up' : `Rank ${score.rank}`} • {score.points} pts
                         </div>
                       </div>
@@ -3483,7 +3483,7 @@ const Admin = ({ mode = 'admin' }: AdminProps) => {
                     </div>
                   ))}
                   {scores.length === 0 && (
-                    <div className="text-center text-[#A89880] py-8 text-sm">No scores recorded yet.</div>
+                    <div className="text-center text-[#4A3F2F] py-8 text-sm">No scores recorded yet.</div>
                   )}
                 </div>
 
@@ -3591,7 +3591,7 @@ const Admin = ({ mode = 'admin' }: AdminProps) => {
                 {editModal.type === 'institute' && (
                   <>
                     <div>
-                      <label className="block text-xs text-[#8B7D6B] mb-1">Name</label>
+                      <label className="block text-xs text-[#4A3F2F] mb-1">Name</label>
                       <input
                         value={editModal.data.name}
                         onChange={(e) => setEditModal({ ...editModal, data: { ...editModal.data, name: e.target.value } })}
@@ -3599,7 +3599,7 @@ const Admin = ({ mode = 'admin' }: AdminProps) => {
                       />
                     </div>
                     <div>
-                      <label className="block text-xs text-[#8B7D6B] mb-1">Short Code</label>
+                      <label className="block text-xs text-[#4A3F2F] mb-1">Short Code</label>
                       <input
                         value={editModal.data.shortCode}
                         onChange={(e) => setEditModal({ ...editModal, data: { ...editModal.data, shortCode: e.target.value } })}
@@ -3676,7 +3676,7 @@ const Admin = ({ mode = 'admin' }: AdminProps) => {
                 {editModal.type === 'team_leader' && (
                   <>
                     <div>
-                      <label className="block text-xs text-[#8B7D6B] mb-1">Name</label>
+                      <label className="block text-xs text-[#4A3F2F] mb-1">Name</label>
                       <input
                         value={editModal.data.name}
                         onChange={(e) => setEditModal({ ...editModal, data: { ...editModal.data, name: e.target.value } })}
@@ -3684,7 +3684,7 @@ const Admin = ({ mode = 'admin' }: AdminProps) => {
                       />
                     </div>
                     <div>
-                      <label className="block text-xs text-[#8B7D6B] mb-1">Email</label>
+                      <label className="block text-xs text-[#4A3F2F] mb-1">Email</label>
                       <input
                         value={editModal.data.email}
                         onChange={(e) => setEditModal({ ...editModal, data: { ...editModal.data, email: e.target.value } })}
@@ -3692,7 +3692,7 @@ const Admin = ({ mode = 'admin' }: AdminProps) => {
                       />
                     </div>
                     <div>
-                      <label className="block text-xs text-[#8B7D6B] mb-1">Phone</label>
+                      <label className="block text-xs text-[#4A3F2F] mb-1">Phone</label>
                       <input
                         value={editModal.data.phone}
                         onChange={(e) => setEditModal({ ...editModal, data: { ...editModal.data, phone: e.target.value } })}
@@ -3700,7 +3700,7 @@ const Admin = ({ mode = 'admin' }: AdminProps) => {
                       />
                     </div>
                     <div>
-                      <label className="block text-xs text-[#8B7D6B] mb-1">Institute</label>
+                      <label className="block text-xs text-[#4A3F2F] mb-1">Institute</label>
                       <select
                         value={editModal.data.institute_id}
                         onChange={(e) => setEditModal({ ...editModal, data: { ...editModal.data, institute_id: e.target.value } })}
@@ -3767,14 +3767,14 @@ const Admin = ({ mode = 'admin' }: AdminProps) => {
                       <div className="flex items-center justify-between gap-2">
                         <div className="flex-1 min-w-0">
                           <div className="font-semibold text-sm text-[#1A1208]">{member.full_name}</div>
-                          <div className="text-xs text-[#8B7D6B] mt-1">
+                          <div className="text-xs text-[#4A3F2F] mt-1">
                             {member.enrollment_no || 'N/A'} • {member.role}
                           </div>
                           {member.email && (
-                            <div className="text-xs text-[#A89880] mt-0.5">{member.email}</div>
+                            <div className="text-xs text-[#4A3F2F] mt-0.5">{member.email}</div>
                           )}
                           {member.phone && (
-                            <div className="text-xs text-[#A89880]">{member.phone}</div>
+                            <div className="text-xs text-[#4A3F2F]">{member.phone}</div>
                           )}
                         </div>
                         <button
@@ -3794,7 +3794,7 @@ const Admin = ({ mode = 'admin' }: AdminProps) => {
               {participants.filter(
                 (p) => p.event_id === groupDetailModal.eventId && p.institute_id === groupDetailModal.instituteId
               ).length === 0 && (
-                  <div className="text-[#B8A890] text-sm text-center py-4">No members found for this group.</div>
+                  <div className="text-[#6B5D4D] text-sm text-center py-4">No members found for this group.</div>
                 )}
 
               <div className="flex gap-3 justify-end pt-4 mt-4 border-t border-[#1A1208]/8">
@@ -3825,7 +3825,7 @@ const Admin = ({ mode = 'admin' }: AdminProps) => {
                   <h3 className="text-lg font-bold">
                     {passwordModal.type === 'access' ? 'Leaderboard Access' : 'Publish Confirmation'}
                   </h3>
-                  <p className="text-xs text-[#A89880]">Enter password to continue</p>
+                  <p className="text-xs text-[#4A3F2F]">Enter password to continue</p>
                 </div>
               </div>
               <form
@@ -3846,7 +3846,7 @@ const Admin = ({ mode = 'admin' }: AdminProps) => {
                   <button
                     type="button"
                     onClick={() => setShowModalPassword(!showModalPassword)}
-                    className="absolute right-4 top-1/2 -translate-y-1/2 text-[#B8A890] hover:text-[#6B5D4D] transition-colors"
+                    className="absolute right-4 top-1/2 -translate-y-1/2 text-[#6B5D4D] hover:text-[#6B5D4D] transition-colors"
                   >
                     {showModalPassword ? <EyeOff size={16} /> : <Eye size={16} />}
                   </button>
