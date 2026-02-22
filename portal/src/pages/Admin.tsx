@@ -60,6 +60,7 @@ import {
   updateTeamLeader,
   deleteTeamLeader,
   createTeamLeaderViaRpc,
+  fetchTeamLeaderByUserId,
   fetchManagers,
   fetchManagersByUserId,
   createManagerViaRpc,
@@ -219,7 +220,7 @@ const Admin = ({ mode = 'admin' }: AdminProps) => {
 
   const categories = ['ALL', 'THEATRE', 'MUSIC', 'DANCE', 'FINE ARTS', 'DIVERSE', 'LITERARY'];
 
-  const managerRoles = ['scoring', 'live_ops', 'institute', 'leaderboard', 'schedule', 'events'];
+  const managerRoles = ['scoring', 'live_ops', 'institute', 'leaderboard', 'schedule', 'events', 'team_leader'];
   const roleTabMap: Record<string, string> = {
     scoring: 'scoring',
     live_ops: 'live',
@@ -227,6 +228,7 @@ const Admin = ({ mode = 'admin' }: AdminProps) => {
     leaderboard: 'leaderboard',
     schedule: 'schedule',
     events: 'participants',
+    team_leader: 'participants',
   };
 
   const loginTitle = isAdminMode ? 'Admin Access' : 'Manager Access';
@@ -420,9 +422,21 @@ const Admin = ({ mode = 'admin' }: AdminProps) => {
         return { ok: false, reason: 'use-admin-login' };
       }
 
+      // Check for manager roles first
       const managerRows = await withTimeout(fetchManagersByUserId(session.user.id), 4000, [] as ManagerRow[]);
       const uniqueRoles = Array.from(new Set(managerRows.map((m) => m.role))).filter(Boolean);
+      
+      // If no manager roles, check if user is a team leader
       if (!uniqueRoles.length) {
+        const teamLeaderResult = await withTimeout(fetchTeamLeaderByUserId(session.user.id), 4000, null);
+        if (teamLeaderResult) {
+          // Team leader has access with a default role
+          setIsAdminUser(false);
+          setManagerRolesForUser(['team_leader']);
+          setManagerRole('team_leader');
+          return { ok: true };
+        }
+        
         setIsAdminUser(false);
         setManagerRole(null);
         setManagerRolesForUser([]);
@@ -1643,7 +1657,7 @@ const Admin = ({ mode = 'admin' }: AdminProps) => {
             </div>
           ) : null}
           <div className="flex flex-col items-center mb-12">
-            <div className="w-24 h-24 rounded-full bg-brand/5 border border-brand/20 flex items-center justify-center text-brand mb-6 shadow-brand">
+            <div className="w-24 h-24 rounded-full bg-brand/5 border border-brand/20 flex items-center justify-center text-brand mb-6">
               <ShieldCheck size={40} />
             </div>
             <h1 className="text-3xl font-bold mb-2">{loginTitle}</h1>
@@ -1800,7 +1814,7 @@ const Admin = ({ mode = 'admin' }: AdminProps) => {
       <div className="flex-1 flex flex-col lg:flex-row gap-4 sm:gap-6 lg:gap-8 p-4 sm:p-6 lg:p-8 overflow-auto no-scrollbar">
         {/* Sidebar */}
         <aside className={`fixed left-0 top-0 bottom-0 w-72 bg-white/95 backdrop-blur-xl p-6 flex flex-col gap-6 border-r border-[#1A1208]/8 z-[70] transition-transform duration-300 ${mobileMenuOpen ? 'translate-x-0' : '-translate-x-full'
-          } lg:static lg:translate-x-0 lg:w-72 lg:min-w-[18rem] lg:max-w-[18rem] lg:bg-transparent lg:backdrop-blur-none lg:p-0 lg:border-none lg:h-[calc(100vh-2rem)] lg:z-auto overflow-y-auto shadow-2xl lg:shadow-none no-scrollbar`}>
+          } lg:static lg:translate-x-0 lg:w-72 lg:min-w-[18rem] lg:max-w-[18rem] lg:bg-transparent lg:backdrop-blur-none lg:p-0 lg:border-none lg:h-[calc(100vh-2rem)] lg:z-auto overflow-y-auto no-scrollbar`}>
           <div className="flex items-center gap-3 flex-shrink-0">
             <img src={logoImage} alt="Logo" className="w-8 sm:w-10 h-8 sm:h-10 object-contain" />
             <div>
@@ -1954,9 +1968,9 @@ const Admin = ({ mode = 'admin' }: AdminProps) => {
                               } hover:scale-105 transform transition-transform`}
                           >
                             <div className="flex items-center gap-3 sm:gap-4 min-w-0">
-                              <div className={`w-10 h-10 sm:w-12 sm:h-12 rounded-lg flex items-center justify-center font-black text-sm sm:text-base flex-shrink-0 ${idx === 0 ? 'bg-gradient-to-br from-yellow-300 to-yellow-600 text-[#1A1208] shadow-lg shadow-yellow-500/30' :
-                                idx === 1 ? 'bg-gradient-to-br from-slate-200 to-slate-400 text-[#1A1208] shadow-lg shadow-slate-300/30' :
-                                  idx === 2 ? 'bg-gradient-to-br from-orange-300 to-orange-600 text-[#1A1208] shadow-lg shadow-orange-500/30' :
+                              <div className={`w-10 h-10 sm:w-12 sm:h-12 rounded-lg flex items-center justify-center font-black text-sm sm:text-base flex-shrink-0 ${idx === 0 ? 'bg-gradient-to-br from-yellow-300 to-yellow-600 text-[#1A1208]' :
+                                idx === 1 ? 'bg-gradient-to-br from-slate-200 to-slate-400 text-[#1A1208]' :
+                                  idx === 2 ? 'bg-gradient-to-br from-orange-300 to-orange-600 text-[#1A1208]' :
                                     'bg-[#1A1208]/[0.05] text-[#4A3F2F]'
                                 }`}>
                                 {idx === 0 ? '1st' : idx === 1 ? '2nd' : idx === 2 ? '3rd' : idx + 1}
