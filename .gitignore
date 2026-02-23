@@ -30,11 +30,11 @@ build/
 .DS_Store
 Thumbs.db
 
-# Large media files
-*.mp4
-*.mov
-*.mkv
-*.avi
+# Large media files (Removed restrictions to allow video uploads)
+# *.mp4
+# *.mov
+# *.mkv
+# *.avi
 
 # Temp/debug files
 *.txt

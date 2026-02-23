@@ -18,7 +18,10 @@ export default function LiquidVideoReveal({ titleLine1, titleLine2, year, videoP
     const videoRef = useRef<HTMLVideoElement>(null);
 
     useEffect(() => {
-        if (!containerRef.current || !textRef.current || !videoRef.current) return;
+        if (!containerRef.current || !textRef.current) return;
+
+        // If no video ref yet (e.g. no path), we still want to animate text
+        const hasVideo = !!videoRef.current;
 
         const elements: HTMLElement[] = [];
         textRef.current.innerHTML = '';
@@ -69,11 +72,13 @@ export default function LiquidVideoReveal({ titleLine1, titleLine2, year, videoP
         );
 
         // Liquid snap video reveal
-        tl.fromTo(videoRef.current,
-            { clipPath: 'circle(0% at 50% 50%)', scale: 0.8 },
-            { clipPath: 'circle(100% at 50% 50%)', scale: 1, ease: "power4.inOut", duration: 1.5 },
-            0.6
-        );
+        if (hasVideo && videoRef.current) {
+            tl.fromTo(videoRef.current,
+                { clipPath: 'circle(0% at 50% 50%)', scale: 0.8 },
+                { clipPath: 'circle(100% at 50% 50%)', scale: 1, ease: "power4.inOut", duration: 1.5 },
+                0.6
+            );
+        }
 
         // Play video ONLY when in view to prevent AbortError ("video-only background media was paused to save power")
         const observer = new IntersectionObserver((entries) => {
@@ -96,6 +101,15 @@ export default function LiquidVideoReveal({ titleLine1, titleLine2, year, videoP
         };
     }, []);
 
+    // Immediate playback attempt
+    useEffect(() => {
+        if (videoRef.current && videoPath) {
+            videoRef.current.play().catch(() => {
+                // Autoplay blocked - will rely on ScrollTrigger/Observer
+            });
+        }
+    }, [videoPath]);
+
     return (
         <div
             ref={containerRef}
@@ -104,13 +118,25 @@ export default function LiquidVideoReveal({ titleLine1, titleLine2, year, videoP
             onMouseLeave={() => LiquidStore.setHover('default')}
         >
             <div className="absolute inset-0 z-0 flex items-center justify-center p-4">
-                <video
-                    ref={videoRef}
-                    src={videoPath}
-                    muted loop playsInline autoPlay
-                    style={{ width: '80%', height: '80%', objectFit: 'cover', transition: 'object-position 0.2s' }}
-                    className="rounded-[3rem] shadow-2xl scale-125"
-                />
+                {videoPath ? (
+                    <video
+                        ref={videoRef}
+                        muted
+                        loop
+                        playsInline
+                        autoPlay
+                        preload="auto"
+                        style={{ width: '80%', height: '80%', objectFit: 'cover', transition: 'object-position 0.2s' }}
+                        className="rounded-[3rem] shadow-2xl scale-125"
+                    >
+                        <source src={videoPath} type="video/mp4" />
+                        Your browser does not support the video tag.
+                    </video>
+                ) : (
+                    <div className="w-[80%] h-[80%] rounded-[3rem] bg-[#1A1208]/5 animate-pulse flex items-center justify-center">
+                        <p className="text-[#8B7D6B] font-bold uppercase tracking-widest opacity-20">Coming Soon</p>
+                    </div>
+                )}
             </div>
 
             <div className="relative z-10 text-center pointer-events-none mix-blend-difference">

@@ -23,9 +23,9 @@ import ras7 from '../assets/images/Ras/7.jpg.jpeg';
 import ras8 from '../assets/images/Ras/8.jpg.jpeg';
 import ras9 from '../assets/images/Ras/9.jpg.jpeg';
 import ras10 from '../assets/images/Ras/10.jpg.jpeg';
-// import video8th from '../assets/Videos/8th Uth Fest 2024  Official Aftermovie  Uka Tarsadia University.mp4';
+import video8th from '../assets/Videos/AJBY5703.mp4';
 // import video9th from '../assets/Videos/9th_aftermovie.mp4';
-const video8th = '';
+// const video8th = '';
 const video9th = '';
 
 /* ═══ COLOR PALETTES PER RAS ═══ */
