@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { motion } from 'framer-motion';
 import {
@@ -52,6 +53,7 @@ import SetPassword from './SetPassword';
 
 const CATEGORIES = ['All', 'Dance', 'Music', 'Theatre', 'Literary', 'Fine Arts', 'Diverse'] as const;
 const MAX_EVENTS_PER_STUDENT = 3;
+const CATEGORY_ORDER = ['Dance', 'Music', 'Theatre', 'Literary', 'Fine Arts', 'Diverse'];
 
 type OfficialEventLimit = {
   minTeamSize: number;
@@ -252,7 +254,6 @@ const TeamLeaderDashboard = () => {
   }, [students, studentSearch, studentFilter, getStudentEventCount]);
 
   // Filtered events for Assign/Dashboard tabs
-  const CATEGORY_ORDER = ['Dance', 'Music', 'Theatre', 'Literary', 'Fine Arts', 'Diverse'];
   const categoryIcons: Record<string, React.ElementType> = {
     Music: Music,
     Dance: Users,
@@ -273,7 +274,7 @@ const TeamLeaderDashboard = () => {
       if (aTeam !== bTeam) return aTeam - bTeam;
       return a.name.localeCompare(b.name);
     });
-  }, [events, categoryFilter]);
+  }, [events, categoryFilter, CATEGORY_ORDER]);
 
   // Available students for assignment to a specific event
   const availableStudentsForEvent = useCallback(
@@ -326,7 +327,7 @@ const TeamLeaderDashboard = () => {
       return a.event.name.localeCompare(b.event.name);
     });
     return breakdown;
-  }, [instituteParticipants, eventById]);
+  }, [instituteParticipants, eventById, CATEGORY_ORDER]);
 
   const openAssignEvent = useCallback((eventId: string) => {
     setActiveTab('assign');
@@ -411,7 +412,7 @@ const TeamLeaderDashboard = () => {
 
   const isValidEmail = (email: string) => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
 
-  /** Extract text from ExcelJS cell value — handles hyperlink objects, RichText, etc. */
+  /** Extract text from ExcelJS cell value - handles hyperlink objects, RichText, etc. */
   const extractCellText = (cellValue: any): string => {
     if (cellValue === null || cellValue === undefined) return '';
     if (typeof cellValue === 'string') return cellValue.trim();
@@ -423,7 +424,7 @@ const TeamLeaderDashboard = () => {
     if (typeof cellValue === 'object' && 'richText' in cellValue && Array.isArray(cellValue.richText)) {
       return cellValue.richText.map((r: any) => r.text || '').join('').trim();
     }
-    // Fallback — avoid [object Object]
+    // Fallback - avoid [object Object]
     return '';
   };
 
@@ -571,7 +572,7 @@ const TeamLeaderDashboard = () => {
         // Validate
         let error = '';
         if (!fullName) error = 'Name is required';
-        else if (enrollmentNo && !/^\d{15}$/.test(enrollmentNo)) error = `Invalid enrollment "${enrollmentNo}" — must be exactly 15 digits`;
+        else if (enrollmentNo && !/^\d{15}$/.test(enrollmentNo)) error = `Invalid enrollment "${enrollmentNo}" - must be exactly 15 digits`;
         else if (!email) error = 'Email is required';
         else if (!isValidEmail(email)) error = `Invalid email "${email}"`;
 
@@ -628,7 +629,7 @@ const TeamLeaderDashboard = () => {
         const em = field === 'email' ? value : r.email;
         let error = '';
         if (!name) error = 'Name is required';
-        else if (enr && !/^\d{15}$/.test(enr)) error = 'Invalid enrollment — must be 15 digits';
+        else if (enr && !/^\d{15}$/.test(enr)) error = 'Invalid enrollment - must be 15 digits';
         else if (!em) error = 'Email is required';
         else if (!isValidEmail(em)) error = 'Invalid email';
         updated.error = error;
@@ -646,7 +647,7 @@ const TeamLeaderDashboard = () => {
     ws.getColumn(2).numFmt = '@';
     ws.getColumn(3).width = 15;
     ws.getColumn(4).width = 30;
-    // Email column data validation — must contain @ and .
+    // Email column data validation - must contain @ and .
     for (let r = 2; r <= 200; r++) {
       ws.getCell(`D${r}`).dataValidation = {
         type: 'custom',
@@ -844,11 +845,10 @@ const TeamLeaderDashboard = () => {
         <button
           key={cat}
           onClick={() => onChange(cat)}
-          className={`px-3 py-1.5 rounded-full text-xs font-bold transition-all ${
-            current === cat
-              ? 'bg-brand text-white'
-              : 'bg-[#1A1208]/[0.03] text-[#4A3F2F] hover:bg-[#1A1208]/[0.05] hover:text-[#4A3F2F]'
-          }`}
+          className={`px-3 py-1.5 rounded-full text-xs font-bold transition-all ${current === cat
+            ? 'bg-brand text-white'
+            : 'bg-[#1A1208]/[0.03] text-[#8B7D6B] hover:bg-[#1A1208]/[0.05] hover:text-[#4A3F2F]'
+            }`}
         >
           {cat}
         </button>
@@ -859,11 +859,10 @@ const TeamLeaderDashboard = () => {
   // ── Event type badge ──
   const TypeBadge = ({ event }: { event: EventRow }) => {
     return (
-      <span className={`inline-flex items-center gap-1.5 px-2 py-0.5 rounded-md text-[10px] font-bold uppercase tracking-wider flex-shrink-0 ${
-        event.is_team
-          ? 'bg-purple-500/10 text-purple-300 border border-purple-500/20'
-          : 'bg-emerald-500/10 text-emerald-300 border border-emerald-500/20'
-      }`}>
+      <span className={`inline-flex items-center gap-1.5 px-2 py-0.5 rounded-md text-[10px] font-bold uppercase tracking-wider flex-shrink-0 ${event.is_team
+        ? 'bg-purple-500/10 text-purple-300 border border-purple-500/20'
+        : 'bg-emerald-500/10 text-emerald-300 border border-emerald-500/20'
+        }`}>
         {event.is_team ? 'Group' : 'Solo'}
       </span>
     );
@@ -874,7 +873,7 @@ const TeamLeaderDashboard = () => {
   if (isCheckingSession) {
     return (
       <div className="min-h-screen bg-[#FEFCF8] flex items-center justify-center">
-        <div className="text-[#6B5D4D]">Loading session...</div>
+        <div className="text-[#A89880]">Loading session...</div>
       </div>
     );
   }
@@ -887,22 +886,22 @@ const TeamLeaderDashboard = () => {
           <div className="flex flex-col items-center mb-10">
             <div className="w-24 h-24 rounded-full bg-brand/5 border border-brand/20 flex items-center justify-center text-brand mb-6 shadow-brand"><Users size={40} /></div>
             <h1 className="text-2xl sm:text-3xl font-bold mb-2">Team Leader Portal</h1>
-            <p className="text-[#6B5D4D] text-sm text-center">Institute Team Leaders Only</p>
+            <p className="text-[#A89880] text-sm text-center">Institute Team Leaders Only</p>
           </div>
           <form className="space-y-6" onSubmit={handleLogin}>
             <div className="space-y-2">
-              <label className="text-xs font-medium text-[#4A3F2F] pl-1 block">Email</label>
+              <label className="text-xs font-medium text-[#8B7D6B] pl-1 block">Email</label>
               <div className="relative">
-                <User className="absolute left-5 top-1/2 -translate-y-1/2 text-[#4A3F2F]" size={18} />
+                <User className="absolute left-5 top-1/2 -translate-y-1/2 text-[#C8B8A0]" size={18} />
                 <input type="email" value={loginForm.email} onChange={(e) => setLoginForm({ ...loginForm, email: e.target.value })} className="w-full bg-[#1A1208]/[0.02] border border-[#1A1208]/8 rounded-2xl py-5 pl-14 pr-6 focus:ring-2 focus:ring-brand/50 outline-none transition-all font-medium" placeholder="your.name@utu.ac.in" required />
               </div>
             </div>
             <div className="space-y-2">
-              <label className="text-xs font-medium text-[#4A3F2F] pl-1 block">Password</label>
+              <label className="text-xs font-medium text-[#8B7D6B] pl-1 block">Password</label>
               <div className="relative">
-                <Lock className="absolute left-5 top-1/2 -translate-y-1/2 text-[#4A3F2F]" size={18} />
+                <Lock className="absolute left-5 top-1/2 -translate-y-1/2 text-[#C8B8A0]" size={18} />
                 <input type={showLoginPassword ? 'text' : 'password'} value={loginForm.password} onChange={(e) => setLoginForm({ ...loginForm, password: e.target.value })} className="w-full bg-[#1A1208]/[0.02] border border-[#1A1208]/8 rounded-2xl py-5 pl-14 pr-14 focus:ring-2 focus:ring-brand/50 outline-none transition-all font-medium" placeholder="••••••••" required />
-                <button type="button" onClick={() => setShowLoginPassword(!showLoginPassword)} className="absolute right-5 top-1/2 -translate-y-1/2 text-[#6B5D4D] hover:text-[#6B5D4D] transition-colors">
+                <button type="button" onClick={() => setShowLoginPassword(!showLoginPassword)} className="absolute right-5 top-1/2 -translate-y-1/2 text-[#B8A890] hover:text-[#6B5D4D] transition-colors">
                   {showLoginPassword ? <EyeOff size={18} /> : <Eye size={18} />}
                 </button>
               </div>
@@ -935,7 +934,7 @@ const TeamLeaderDashboard = () => {
           <img src={logoImage} alt="Logo" className="w-8 h-8 object-contain" />
           <div>
             <span className="font-bold text-lg">UTh Fest</span>
-            <span className="text-xs text-[#6B5D4D] block">Team Leader</span>
+            <span className="text-xs text-[#A89880] block">Team Leader</span>
           </div>
         </div>
         <button onClick={() => setMobileMenuOpen(!mobileMenuOpen)} className="p-2 rounded-xl bg-[#1A1208]/[0.03]">
@@ -947,7 +946,7 @@ const TeamLeaderDashboard = () => {
         <div className="lg:hidden fixed inset-0 z-[60] bg-white/95 backdrop-blur-xl pt-20 px-6">
           <div className="space-y-2">
             {tabs.map((tab) => (
-              <button key={tab.id} onClick={() => { setActiveTab(tab.id); setMobileMenuOpen(false); }} className={`w-full flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-bold transition-all ${activeTab === tab.id ? 'bg-[#1A1208]/[0.05] text-[#1A1208]' : 'text-[#6B5D4D] hover:text-[#1A1208]'}`}>
+              <button key={tab.id} onClick={() => { setActiveTab(tab.id); setMobileMenuOpen(false); }} className={`w-full flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-bold transition-all ${activeTab === tab.id ? 'bg-[#1A1208]/[0.05] text-[#1A1208]' : 'text-[#A89880] hover:text-[#1A1208]'}`}>
                 <tab.icon size={18} /> {tab.label}
               </button>
             ))}
@@ -968,16 +967,16 @@ const TeamLeaderDashboard = () => {
           </div>
           <div className="mt-4 mb-6 elite-glass p-3 rounded-xl">
             <div className="text-sm font-bold text-[#1A1208] truncate">{teamLeader?.name}</div>
-            <div className="text-[10px] text-[#6B5D4D] truncate mt-0.5">{teamLeader?.email}</div>
+            <div className="text-[10px] text-[#A89880] truncate mt-0.5">{teamLeader?.email}</div>
           </div>
           <nav className="flex-1 space-y-1">
             {tabs.map((tab) => (
-              <button key={tab.id} onClick={() => setActiveTab(tab.id)} className={`w-full flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-bold transition-all ${activeTab === tab.id ? 'bg-brand/10 text-[#1A1208] border border-[#1A1208]/8' : 'text-[#6B5D4D] hover:text-[#1A1208] hover:bg-[#1A1208]/[0.02]'}`}>
+              <button key={tab.id} onClick={() => setActiveTab(tab.id)} className={`w-full flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-bold transition-all ${activeTab === tab.id ? 'bg-brand/10 text-[#1A1208] border border-[#1A1208]/8' : 'text-[#A89880] hover:text-[#1A1208] hover:bg-[#1A1208]/[0.02]'}`}>
                 <tab.icon size={18} /> {tab.label}
               </button>
             ))}
           </nav>
-          <button onClick={handleLogout} className="flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-bold text-[#6B5D4D] hover:text-red-400 transition-colors mt-auto"><LogOut size={18} /> Sign Out</button>
+          <button onClick={handleLogout} className="flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-bold text-[#B8A890] hover:text-red-400 transition-colors mt-auto"><LogOut size={18} /> Sign Out</button>
         </aside>
 
         {/* Main Content */}
@@ -989,13 +988,13 @@ const TeamLeaderDashboard = () => {
                 <h1 className="text-2xl sm:text-3xl font-black tracking-tight">
                   {activeTab === 'dashboard' ? 'Dashboard' : activeTab === 'students' ? 'Students' : 'Assign Events'}
                 </h1>
-                <p className="text-[#6B5D4D] text-sm mt-1">
+                <p className="text-[#A89880] text-sm mt-1">
                   {activeTab === 'dashboard' ? 'Overview of your institute\'s registrations' :
-                   activeTab === 'students' ? 'Manage your institute\'s student roster' :
-                   'Assign students to events — drag & drop or click'}
+                    activeTab === 'students' ? 'Manage your institute\'s student roster' :
+                      'Assign students to events - drag & drop or click'}
                 </p>
               </div>
-              <button onClick={loadData} className="p-3 rounded-xl bg-[#1A1208]/[0.03] hover:bg-[#1A1208]/[0.05] transition-colors" title="Refresh"><RefreshCw size={18} className="text-[#6B5D4D]" /></button>
+              <button onClick={loadData} className="p-3 rounded-xl bg-[#1A1208]/[0.03] hover:bg-[#1A1208]/[0.05] transition-colors" title="Refresh"><RefreshCw size={18} className="text-[#A89880]" /></button>
             </div>
 
             {/* ═══════════ DASHBOARD ═══════════ */}
@@ -1004,21 +1003,21 @@ const TeamLeaderDashboard = () => {
                 {/* Stats */}
                 <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
                   <div className="elite-glass p-5">
-                    <div className="text-[10px] font-black text-[#4A3F2F] uppercase tracking-[0.3em] mb-2">Students</div>
+                    <div className="text-[10px] font-black text-[#C8B8A0] uppercase tracking-[0.3em] mb-2">Students</div>
                     <div className="text-3xl font-black text-brand">{stats.uniqueStudents}</div>
-                    <div className="text-xs text-[#6B5D4D] mt-1">{stats.assignedStudents} assigned</div>
+                    <div className="text-xs text-[#B8A890] mt-1">{stats.assignedStudents} assigned</div>
                   </div>
                   <div className="elite-glass p-5">
-                    <div className="text-[10px] font-black text-[#4A3F2F] uppercase tracking-[0.3em] mb-2">Events</div>
+                    <div className="text-[10px] font-black text-[#C8B8A0] uppercase tracking-[0.3em] mb-2">Events</div>
                     <div className="text-3xl font-black text-brand">{stats.eventsRegistered}</div>
-                    <div className="text-xs text-[#6B5D4D] mt-1">of {events.length} total</div>
+                    <div className="text-xs text-[#B8A890] mt-1">of {events.length} total</div>
                   </div>
                   <div className="elite-glass p-5">
-                    <div className="text-[10px] font-black text-[#4A3F2F] uppercase tracking-[0.3em] mb-2">Assignments</div>
+                    <div className="text-[10px] font-black text-[#C8B8A0] uppercase tracking-[0.3em] mb-2">Assignments</div>
                     <div className="text-3xl font-black text-brand">{stats.totalAssignments}</div>
                   </div>
                   <div className="elite-glass p-5">
-                    <div className="text-[10px] font-black text-[#4A3F2F] uppercase tracking-[0.3em] mb-2">Unassigned</div>
+                    <div className="text-[10px] font-black text-[#C8B8A0] uppercase tracking-[0.3em] mb-2">Unassigned</div>
                     <div className="text-3xl font-black text-red-400">{stats.uniqueStudents - stats.assignedStudents}</div>
                   </div>
                 </div>
@@ -1031,7 +1030,7 @@ const TeamLeaderDashboard = () => {
                   {(() => {
                     const filtered = eventBreakdown.filter((i) => categoryFilter === 'All' || i.event.category === categoryFilter);
                     if (filtered.length === 0)
-                      return <div className="text-[#6B5D4D] text-sm">No registrations yet{categoryFilter !== 'All' ? ` in ${categoryFilter}` : ''}. Add students first, then assign them to events.</div>;
+                      return <div className="text-[#B8A890] text-sm">No registrations yet{categoryFilter !== 'All' ? ` in ${categoryFilter}` : ''}. Add students first, then assign them to events.</div>;
                     // Group by category
                     const bdGroups: { category: string; items: typeof filtered }[] = [];
                     const bdMap = new Map<string, typeof filtered>();
@@ -1052,7 +1051,7 @@ const TeamLeaderDashboard = () => {
                                   <CatIcon size={16} />
                                 </div>
                                 <span className="text-sm font-black uppercase tracking-widest text-[#6B5D4D]">{group.category}</span>
-                                <span className="text-[10px] text-[#6B5D4D]">{group.items.length}</span>
+                                <span className="text-[10px] text-[#B8A890]">{group.items.length}</span>
                                 <div className="flex-1 h-px bg-[#1A1208]/[0.03]" />
                               </div>
                               <div className="space-y-3">
@@ -1088,10 +1087,10 @@ const TeamLeaderDashboard = () => {
                                             <span className="truncate">{item.event.name}</span>
                                             <TypeBadge event={item.event} />
                                           </div>
-                                          <div className="text-[10px] text-[#6B5D4D] uppercase tracking-widest">{item.event.category}</div>
+                                          <div className="text-[10px] text-[#A89880] uppercase tracking-widest">{item.event.category}</div>
                                         </div>
                                       </div>
-                                      <div className="text-xs text-[#4A3F2F] flex items-center gap-2">
+                                      <div className="text-xs text-[#8B7D6B] flex items-center gap-2">
                                         <span className={filledCount > 0 ? 'text-brand' : ''}>{filledCount}/{maxEntries || '∞'} {item.event.is_team ? 'team(s)' : 'slot(s)'} filled</span>
                                         {(limits.maxAccompanists || 0) > 0 && <span>• {limits.maxAccompanists} accompanist(s)</span>}
                                       </div>
@@ -1173,7 +1172,7 @@ const TeamLeaderDashboard = () => {
                                   <CatIcon size={16} />
                                 </div>
                                 <span className="text-sm font-black uppercase tracking-widest text-[#6B5D4D]">{group.category}</span>
-                                <span className="text-[10px] text-[#6B5D4D]">{group.events.length}</span>
+                                <span className="text-[10px] text-[#B8A890]">{group.events.length}</span>
                                 <div className="flex-1 h-px bg-[#1A1208]/[0.03]" />
                               </div>
                               <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
@@ -1192,13 +1191,13 @@ const TeamLeaderDashboard = () => {
                                         </div>
                                         <div className="min-w-0 flex-1">
                                           <div className="font-medium text-[#4A3F2F] flex items-center gap-2 min-w-0">
-                                            <span className="truncate">{e.name}</span> 
+                                            <span className="truncate">{e.name}</span>
                                             <TypeBadge event={e} />
                                           </div>
-                                          <div className="text-[10px] text-[#6B5D4D] uppercase tracking-widest">{e.category}</div>
+                                          <div className="text-[10px] text-[#B8A890] uppercase tracking-widest">{e.category}</div>
                                         </div>
                                       </div>
-                                      <div className="text-xs text-[#6B5D4D] mt-1 flex items-center gap-2">
+                                      <div className="text-xs text-[#A89880] mt-1 flex items-center gap-2">
                                         <span className={filledCount > 0 ? 'text-brand' : ''}>{filledCount}/{maxEntries || '∞'} {e.is_team ? 'team(s)' : 'slot(s)'} filled</span>
                                         {(limits.maxAccompanists || 0) > 0 && <span>• {limits.maxAccompanists} accompanist(s)</span>}
                                       </div>
@@ -1256,7 +1255,7 @@ const TeamLeaderDashboard = () => {
                     <h2 className="text-lg font-bold">Student Roster ({filteredStudents.length})</h2>
                     <div className="flex gap-2 text-xs">
                       {(['all', 'assigned', 'unassigned'] as const).map((f) => (
-                        <button key={f} onClick={() => setStudentFilter(f)} className={`px-3 py-1.5 rounded-full font-bold capitalize transition-all ${studentFilter === f ? 'bg-brand text-white' : 'bg-[#1A1208]/[0.03] text-[#4A3F2F] hover:text-[#1A1208]'}`}>
+                        <button key={f} onClick={() => setStudentFilter(f)} className={`px-3 py-1.5 rounded-full font-bold capitalize transition-all ${studentFilter === f ? 'bg-brand text-white' : 'bg-[#1A1208]/[0.03] text-[#8B7D6B] hover:text-[#1A1208]'}`}>
                           {f}
                         </button>
                       ))}
@@ -1264,12 +1263,12 @@ const TeamLeaderDashboard = () => {
                   </div>
 
                   <div className="relative mb-4">
-                    <Search size={16} className="absolute left-3 top-1/2 -translate-y-1/2 text-[#6B5D4D]" />
+                    <Search size={16} className="absolute left-3 top-1/2 -translate-y-1/2 text-[#B8A890]" />
                     <input type="text" placeholder="Search students..." value={studentSearch} onChange={(e) => setStudentSearch(e.target.value)} className="w-full bg-[#1A1208]/[0.03] border border-[#1A1208]/8 rounded-xl pl-10 pr-4 py-2 text-sm text-[#2A1F0F] focus:outline-none focus:border-brand/50" />
                   </div>
 
                   {filteredStudents.length === 0 ? (
-                    <div className="text-[#6B5D4D] text-sm text-center py-8">
+                    <div className="text-[#B8A890] text-sm text-center py-8">
                       {students.length === 0 ? 'No students yet. Add students above or import from Excel.' : 'No students match your filter.'}
                     </div>
                   ) : (
@@ -1282,24 +1281,24 @@ const TeamLeaderDashboard = () => {
                             <div className="min-w-0 flex-1">
                               <div className="font-semibold text-sm text-[#1A1208] flex items-center gap-2">
                                 {s.full_name}
-                                <span className={`text-[10px] px-1.5 py-0.5 rounded-md font-bold ${evCount === 0 ? 'bg-[#1A1208]/[0.03] text-[#6B5D4D]' : evCount >= MAX_EVENTS_PER_STUDENT ? 'bg-red-500/10 text-red-300' : 'bg-brand/10 text-brand'}`}>
+                                <span className={`text-[10px] px-1.5 py-0.5 rounded-md font-bold ${evCount === 0 ? 'bg-[#1A1208]/[0.03] text-[#B8A890]' : evCount >= MAX_EVENTS_PER_STUDENT ? 'bg-red-500/10 text-red-300' : 'bg-brand/10 text-brand'}`}>
                                   {evCount}/{MAX_EVENTS_PER_STUDENT} events
                                 </span>
                               </div>
-                              <div className="text-[10px] text-[#6B5D4D] mt-0.5">
-                                {s.enrollment_no || '—'} {s.phone ? `• ${s.phone}` : ''} {s.email ? `• ${s.email}` : ''}
+                              <div className="text-[10px] text-[#A89880] mt-0.5">
+                                {s.enrollment_no || '-'} {s.phone ? `• ${s.phone}` : ''} {s.email ? `• ${s.email}` : ''}
                               </div>
                               {evCount > 0 && (
                                 <div className="flex flex-wrap gap-1 mt-1.5">
                                   {[...assignedEvts].map((eid) => {
                                     const ev = eventById.get(eid);
-                                    return ev ? <span key={eid} className="text-[9px] px-1.5 py-0.5 rounded bg-[#1A1208]/[0.03] text-[#6B5D4D]">{ev.name}</span> : null;
+                                    return ev ? <span key={eid} className="text-[9px] px-1.5 py-0.5 rounded bg-[#1A1208]/[0.03] text-[#A89880]">{ev.name}</span> : null;
                                   })}
                                 </div>
                               )}
                             </div>
                             <div className="flex gap-2 flex-shrink-0 opacity-0 group-hover:opacity-100 transition-opacity">
-                              <button onClick={() => setEditStudentModal({ ...s })} className="text-[10px] text-[#4A3F2F] hover:text-[#1A1208] px-2 py-1 rounded-lg hover:bg-[#1A1208]/[0.03]">Edit</button>
+                              <button onClick={() => setEditStudentModal({ ...s })} className="text-[10px] text-[#8B7D6B] hover:text-[#1A1208] px-2 py-1 rounded-lg hover:bg-[#1A1208]/[0.03]">Edit</button>
                               <button onClick={() => setDeleteStudentConfirm(s)} className="text-[10px] text-red-400/60 hover:text-red-300 px-2 py-1 rounded-lg hover:bg-red-500/10"><Trash2 size={12} /></button>
                             </div>
                           </div>
@@ -1312,7 +1311,7 @@ const TeamLeaderDashboard = () => {
                 {/* Rules */}
                 <div className="elite-glass p-6">
                   <div className="text-[10px] font-black uppercase tracking-[0.4em] text-brand mb-3">Rules</div>
-                  <ul className="space-y-2 text-[#4A3F2F] text-xs list-disc list-inside">
+                  <ul className="space-y-2 text-[#8B7D6B] text-xs list-disc list-inside">
                     <li>A student can participate in a maximum of {MAX_EVENTS_PER_STUDENT} events.</li>
                     <li>Each institute has entry limits per event.</li>
                     <li>Only bonafide, full-time students of UTU are eligible.</li>
@@ -1329,9 +1328,9 @@ const TeamLeaderDashboard = () => {
               <div className="space-y-6">
                 {students.length === 0 ? (
                   <div className="elite-glass p-10 text-center">
-                    <Users size={40} className="mx-auto mb-4 text-[#4A3F2F]" />
+                    <Users size={40} className="mx-auto mb-4 text-[#C8B8A0]" />
                     <h3 className="text-lg font-bold mb-2">No Students in Roster</h3>
-                    <p className="text-[#6B5D4D] text-sm mb-4">Add students in the Students tab first, then come here to assign them to events.</p>
+                    <p className="text-[#A89880] text-sm mb-4">Add students in the Students tab first, then come here to assign them to events.</p>
                     <button onClick={() => setActiveTab('students')} className="btn-elite justify-center text-sm">Go to Students</button>
                   </div>
                 ) : (
@@ -1346,12 +1345,12 @@ const TeamLeaderDashboard = () => {
                       <div className="lg:col-span-1 order-2 lg:order-1">
                         <div className="elite-glass p-3 sm:p-4 lg:sticky lg:top-4 max-h-[50vh] lg:max-h-[70vh]">
                           <h3 className="text-xs sm:text-sm font-bold mb-2 sm:mb-3 flex items-center gap-2">
-                            <GripVertical size={12} className="text-[#6B5D4D] hidden sm:block" />
+                            <GripVertical size={12} className="text-[#B8A890] hidden sm:block" />
                             <span>Student Pool</span>
-                            <span className="text-[9px] sm:text-[10px] text-[#6B5D4D] font-normal ml-auto hidden sm:inline">drag</span>
+                            <span className="text-[9px] sm:text-[10px] text-[#B8A890] font-normal ml-auto hidden sm:inline">drag</span>
                           </h3>
                           <div className="relative mb-2 sm:mb-3">
-                            <Search size={12} className="absolute left-3 top-1/2 -translate-y-1/2 text-[#6B5D4D]" />
+                            <Search size={12} className="absolute left-3 top-1/2 -translate-y-1/2 text-[#B8A890]" />
                             <input type="text" placeholder="Search..." value={assignSearch} onChange={(e) => setAssignSearch(e.target.value)} className="w-full bg-[#1A1208]/[0.03] border border-[#1A1208]/8 rounded-lg pl-8 pr-3 py-1.5 sm:py-2 text-xs text-[#2A1F0F] focus:outline-none focus:border-brand/50" />
                           </div>
                           <div className="space-y-1 sm:space-y-1.5 overflow-y-auto pr-1 max-h-[35vh] sm:max-h-[50vh]">
@@ -1371,23 +1370,21 @@ const TeamLeaderDashboard = () => {
                                     draggable={!isFull}
                                     onDragStart={(e) => handleDragStart(e, s.id)}
                                     onDragEnd={handleDragEnd}
-                                    className={`px-3 py-2 rounded-lg border text-xs transition-all ${
-                                      isFull
-                                        ? 'bg-[#1A1208]/[0.01] border-[#1A1208]/4 text-[#6B5D4D] cursor-not-allowed'
-                                        : isBeingDragged
+                                    className={`px-3 py-2 rounded-lg border text-xs transition-all ${isFull
+                                      ? 'bg-[#1A1208]/[0.01] border-[#1A1208]/4 text-[#B8A890] cursor-not-allowed'
+                                      : isBeingDragged
                                         ? 'bg-brand/10 border-brand/30 text-brand scale-95'
                                         : 'bg-[#1A1208]/[0.02] border-[#1A1208]/4 text-[#2A1F0F] cursor-grab hover:border-[#1A1208]/10 active:cursor-grabbing'
-                                    }`}
+                                      }`}
                                   >
                                     <div className="flex items-center justify-between">
                                       <span className="font-medium truncate">{s.full_name}</span>
-                                      <span className={`text-[9px] px-1.5 py-0.5 rounded font-bold ml-2 flex-shrink-0 ${
-                                        isFull ? 'bg-red-500/10 text-red-300' : evCount > 0 ? 'bg-brand/10 text-brand' : 'bg-[#1A1208]/[0.03] text-[#6B5D4D]'
-                                      }`}>
+                                      <span className={`text-[9px] px-1.5 py-0.5 rounded font-bold ml-2 flex-shrink-0 ${isFull ? 'bg-red-500/10 text-red-300' : evCount > 0 ? 'bg-brand/10 text-brand' : 'bg-[#1A1208]/[0.03] text-[#B8A890]'
+                                        }`}>
                                         {evCount}/{MAX_EVENTS_PER_STUDENT}
                                       </span>
                                     </div>
-                                    {s.enrollment_no && <div className="text-[9px] text-[#6B5D4D] mt-0.5">{s.enrollment_no}</div>}
+                                    {s.enrollment_no && <div className="text-[9px] text-[#B8A890] mt-0.5">{s.enrollment_no}</div>}
                                   </div>
                                 );
                               })}
@@ -1415,231 +1412,231 @@ const TeamLeaderDashboard = () => {
                                     <CatIcon size={14} />
                                   </div>
                                   <span className="text-xs sm:text-sm font-black uppercase tracking-widest text-[#6B5D4D]">{group.category}</span>
-                                  <span className="text-[9px] sm:text-[10px] text-[#6B5D4D]">{group.events.length}</span>
+                                  <span className="text-[9px] sm:text-[10px] text-[#B8A890]">{group.events.length}</span>
                                   <div className="flex-1 h-px bg-[#1A1208]/[0.03]" />
                                 </div>
                                 <div className="space-y-2 sm:space-y-3">
-                        {group.events.map((ev) => {
-                          const isExpanded = expandedEventId === ev.id;
-                          const eventParticipants = instituteParticipants.filter((p) => p.event_id === ev.id && p.role === 'participant');
-                          const isDragTarget = dragOverEventId === ev.id;
-                          const limits = getEventLimits(ev);
-                          const maxEntries = limits.maxEntries;
+                                  {group.events.map((ev) => {
+                                    const isExpanded = expandedEventId === ev.id;
+                                    const eventParticipants = instituteParticipants.filter((p) => p.event_id === ev.id && p.role === 'participant');
+                                    const isDragTarget = dragOverEventId === ev.id;
+                                    const limits = getEventLimits(ev);
+                                    const maxEntries = limits.maxEntries;
 
-                          const teamGroups = new Map<string, ParticipantRow[]>();
-                          eventParticipants.forEach((p) => {
-                            const tid = p.team_id || 'Team-1';
-                            if (!teamGroups.has(tid)) teamGroups.set(tid, []);
-                            teamGroups.get(tid)!.push(p);
-                          });
-                          const incompleteTeamCount = ev.is_team
-                            ? [...teamGroups.values()].filter((members) => members.length < limits.minTeamSize).length
-                            : 0;
-                          const headerFilledCount = ev.is_team ? teamGroups.size : eventParticipants.length;
+                                    const teamGroups = new Map<string, ParticipantRow[]>();
+                                    eventParticipants.forEach((p) => {
+                                      const tid = p.team_id || 'Team-1';
+                                      if (!teamGroups.has(tid)) teamGroups.set(tid, []);
+                                      teamGroups.get(tid)!.push(p);
+                                    });
+                                    const incompleteTeamCount = ev.is_team
+                                      ? [...teamGroups.values()].filter((members) => members.length < limits.minTeamSize).length
+                                      : 0;
+                                    const headerFilledCount = ev.is_team ? teamGroups.size : eventParticipants.length;
 
-                          return (
-                            <div
-                              key={ev.id}
-                              onDragOver={(e) => handleDragOver(e, ev.id)}
-                              onDragLeave={handleDragLeave}
-                              onDrop={(e) => handleDrop(e, ev.id)}
-                              className={`elite-glass overflow-hidden transition-all ${isDragTarget ? 'ring-2 ring-brand/50 border-brand/30' : ''}`}
-                            >
-                              {/* Event Header */}
-                              <button
-                                onClick={() => setExpandedEventId(isExpanded ? null : ev.id)}
-                                className="w-full flex items-center gap-2 sm:gap-3 p-3 sm:p-4 hover:bg-[#1A1208]/[0.02] transition-colors text-left group/ev"
-                              >
-                                {isExpanded ? <ChevronDown size={14} className="text-[#6B5D4D] flex-shrink-0" /> : <ChevronRight size={14} className="text-[#6B5D4D] flex-shrink-0" />}
-                                <div className="w-9 h-9 sm:w-10 sm:h-10 rounded-xl bg-[#1A1208]/[0.02] border border-[#1A1208]/4 flex items-center justify-center text-brand group-hover/ev:bg-brand group-hover/ev:text-white transition-all duration-500 flex-shrink-0">
-                                  {React.createElement(categoryIcons[ev.category] || Trophy, { size: 18 })}
-                                </div>
-                                <div className="flex-1 min-w-0">
-                                  <div className="font-semibold text-xs sm:text-sm flex items-center gap-2 flex-wrap">
-                                    {ev.name} <TypeBadge event={ev} />
-                                    {incompleteTeamCount > 0 && (
-                                      <span className="px-2 py-0.5 rounded-md bg-red-500/10 border border-red-500/25 text-red-300 text-[10px] font-bold">
-                                        {incompleteTeamCount} incomplete team(s)
-                                      </span>
-                                    )}
-                                  </div>
-                                  <div className="text-[9px] sm:text-[10px] text-[#6B5D4D] uppercase tracking-widest mt-0.5">{ev.category}</div>
-                                </div>
-                                <div className="flex items-center gap-2 sm:gap-3 text-[10px] sm:text-xs text-[#4A3F2F] flex-shrink-0 flex-col sm:flex-row">
-                                  <span className={headerFilledCount > 0 ? 'text-brand' : ''}>{headerFilledCount}</span>
-                                  <span className="text-[#4A3F2F] hidden sm:inline">{maxEntries || '∞'}</span>
-                                </div>
-                              </button>
-
-                              {/* Expanded */}
-                              {isExpanded && (
-                                <div className="border-t border-[#1A1208]/4 p-3 sm:p-4 space-y-3 sm:space-y-4 text-xs sm:text-sm">
-                                  {/* Constraints */}
-                                  <div className="flex flex-wrap gap-1 sm:gap-2 text-[9px] sm:text-[10px]">
-                                    <span className="px-2 py-1 bg-[#1A1208]/[0.03] rounded-md text-[#6B5D4D]">{ev.is_team ? `Group · ${limits.minTeamSize}-${limits.maxTeamSize}` : 'Solo'}</span>
-                                    <span className="px-2 py-1 bg-[#1A1208]/[0.03] rounded-md text-[#6B5D4D]">{maxEntries || '∞'} max</span>
-                                    {(limits.maxAccompanists || 0) > 0 && <span className="px-2 py-1 bg-[#1A1208]/[0.03] rounded-md text-[#6B5D4D]">{limits.maxAccompanists} accompanists</span>}
-                                  </div>
-
-                                  {/* Assigned */}
-                                  {eventParticipants.length > 0 && (
-                                    <div>
-                                      <div className="text-[10px] sm:text-xs font-bold text-[#4A3F2F] mb-2">Assigned ({eventParticipants.length})</div>
-                                      {ev.is_team ? (
-                                        <div className="space-y-2 sm:space-y-3">
-                                          {[...teamGroups.entries()].map(([teamId, members]) => (
-                                            <div key={teamId} className={`rounded-xl p-2 sm:p-3 text-[10px] ${members.length < limits.minTeamSize ? 'bg-red-500/5 border-2 border-red-500/30' : 'bg-[#1A1208]/[0.02] border border-[#1A1208]/4'}`}>
-                                              <div className="font-bold text-[#6B5D4D] uppercase tracking-widest mb-1 sm:mb-2">{teamId} ({members.length}/{limits.maxTeamSize || '∞'})</div>
-                                              {members.length < limits.minTeamSize && (
-                                                <div className="flex items-center gap-2 mb-2 px-2 py-1.5 bg-red-500/10 border border-red-500/20 rounded-lg">
-                                                  <AlertTriangle size={12} className="text-red-400 flex-shrink-0" />
-                                                  <span className="text-[10px] font-bold text-red-300">Below minimum! Need at least {limits.minTeamSize} members — team may be disqualified</span>
-                                                </div>
-                                              )}
-                                              <div className="space-y-1">
-                                                {members.map((p) => (
-                                                  <div key={p.id} className="flex items-center justify-between text-xs py-1">
-                                                    <span className="text-[#2A1F0F]">{p.full_name} <span className="text-[#6B5D4D]">{p.enrollment_no || ''}</span></span>
-                                                    <button onClick={() => unassignStudentFromEvent(p.id)} className="text-red-400/50 hover:text-red-300 p-1"><Minus size={12} /></button>
-                                                  </div>
-                                                ))}
-                                              </div>
-                                            </div>
-                                          ))}
-                                        </div>
-                                      ) : (
-                                        <div className="space-y-1">
-                                          {eventParticipants.map((p) => (
-                                            <div key={p.id} className="flex items-center justify-between bg-[#1A1208]/[0.02] border border-[#1A1208]/4 rounded-lg px-2 sm:px-3 py-1.5 sm:py-2 text-[10px] sm:text-xs">
-                                              <span className="text-[#2A1F0F] truncate">{p.full_name}</span>
-                                              <button onClick={() => unassignStudentFromEvent(p.id)} className="text-red-400/50 hover:text-red-300 p-0.5 flex-shrink-0"><Minus size={12} /></button>
-                                            </div>
-                                          ))}
-                                        </div>
-                                      )}
-                                    </div>
-                                  )}
-
-                                  {/* Add student */}
-                                  {ev.is_team && teamAssignMode?.eventId === ev.id ? (
-                                    <div className="bg-purple-500/5 border border-purple-500/20 rounded-xl p-3 sm:p-4">
-                                      <div className="flex items-center justify-between mb-2 sm:mb-3 gap-2">
-                                        <div className="text-[10px] sm:text-xs font-bold text-purple-300"><span className="hidden sm:inline">Forming {teamAssignMode.teamId} •</span> Select {limits.minTeamSize}-{limits.maxTeamSize}</div>
-                                        <button onClick={() => { setTeamAssignMode(null); setSelectedStudentsForTeam([]); }} className="text-[9px] sm:text-[10px] text-[#6B5D4D] hover:text-[#1A1208] flex-shrink-0">×</button>
-                                      </div>
-                                      <div className="space-y-1 max-h-40 sm:max-h-48 overflow-y-auto mb-2 sm:mb-3">
-                                        {availableStudentsForEvent(ev.id).map((s) => {
-                                          const selected = selectedStudentsForTeam.includes(s.id);
-                                          return (
-                                            <button
-                                              key={s.id}
-                                              onClick={() => setSelectedStudentsForTeam((prev) => selected ? prev.filter((id) => id !== s.id) : [...prev, s.id])}
-                                              className={`w-full flex items-center gap-2 px-3 py-2 rounded-lg text-xs text-left transition-all ${selected ? 'bg-purple-500/20 border border-purple-500/30 text-purple-200' : 'bg-[#1A1208]/[0.02] border border-[#1A1208]/4 text-[#4A3F2F] hover:border-[#1A1208]/10'}`}
-                                            >
-                                              <div className={`w-4 h-4 rounded border flex-shrink-0 flex items-center justify-center ${selected ? 'bg-purple-500 border-purple-500' : 'border-[#1A1208]/8'}`}>
-                                                {selected && <Check size={10} className="text-[#1A1208]" />}
-                                              </div>
-                                              <span className="truncate">{s.full_name}</span>
-                                              <span className="text-[8px] sm:text-[9px] text-[#6B5D4D] ml-auto flex-shrink-0">{getStudentEventCount(s)}/{MAX_EVENTS_PER_STUDENT}</span>
-                                            </button>
-                                          );
-                                        })}
-                                      </div>
-                                      <div className="flex flex-col sm:flex-row items-start sm:items-center gap-2 sm:gap-3">
+                                    return (
+                                      <div
+                                        key={ev.id}
+                                        onDragOver={(e) => handleDragOver(e, ev.id)}
+                                        onDragLeave={handleDragLeave}
+                                        onDrop={(e) => handleDrop(e, ev.id)}
+                                        className={`elite-glass overflow-hidden transition-all ${isDragTarget ? 'ring-2 ring-brand/50 border-brand/30' : ''}`}
+                                      >
+                                        {/* Event Header */}
                                         <button
-                                          onClick={() => handleBulkAssign(ev.id, selectedStudentsForTeam)}
-                                          disabled={selectedStudentsForTeam.length < limits.minTeamSize || selectedStudentsForTeam.length > limits.maxTeamSize}
-                                          className="btn-elite text-[10px] sm:text-xs !py-1.5 sm:!py-2 !px-3 sm:!px-4 disabled:opacity-40 w-full sm:w-auto"
+                                          onClick={() => setExpandedEventId(isExpanded ? null : ev.id)}
+                                          className="w-full flex items-center gap-2 sm:gap-3 p-3 sm:p-4 hover:bg-[#1A1208]/[0.02] transition-colors text-left group/ev"
                                         >
-                                          Assign ({selectedStudentsForTeam.length})
-                                        </button>
-                                        <span className="text-[9px] sm:text-[10px] text-[#6B5D4D] hidden sm:inline">{selectedStudentsForTeam.length}</span>
-                                      </div>
-                                    </div>
-                                  ) : (
-                                    <div>
-                                      {ev.is_team ? (
-                                        <div className="flex flex-wrap gap-2">
-                                          <button
-                                            onClick={() => {
-                                              const maxEntries = limits.maxEntries;
-                                              if (maxEntries > 0 && teamGroups.size >= maxEntries) {
-                                                setAssignError(`Max ${maxEntries} team(s) reached for ${ev.name}. Add members to existing team.`);
-                                                return;
-                                              }
-                                              let idx = 1;
-                                              const usedTeams = new Set(eventParticipants.map((p) => p.team_id));
-                                              while (usedTeams.has(`Team-${idx}`)) idx++;
-                                              setTeamAssignMode({ eventId: ev.id, teamId: `Team-${idx}` });
-                                              setSelectedStudentsForTeam([]);
-                                            }}
-                                            className="text-xs text-brand hover:text-brand/80 font-bold flex items-center gap-1 transition-colors"
-                                          >
-                                            <Plus size={14} /> Form New Team
-                                          </button>
-                                          <button
-                                            onClick={() => { setQuickAssignEventId(quickAssignEventId === ev.id ? null : ev.id); setQuickAssignQuery(''); }}
-                                            className="text-xs text-[#4A3F2F] hover:text-brand font-bold flex items-center gap-1 transition-colors"
-                                          >
-                                            <Plus size={14} /> Quick Add to Existing Team
-                                          </button>
-                                        </div>
-                                      ) : (
-                                        <button
-                                          onClick={() => { setQuickAssignEventId(quickAssignEventId === ev.id ? null : ev.id); setQuickAssignQuery(''); }}
-                                          className="text-xs text-brand hover:text-brand/80 font-bold flex items-center gap-1 transition-colors"
-                                        >
-                                          <Plus size={14} /> Assign Student
-                                        </button>
-                                      )}
-                                      {quickAssignEventId === ev.id && (
-                                        <div className="mt-3 bg-[#1A1208]/[0.02] border border-[#1A1208]/8 rounded-xl p-3">
-                                          <div className="relative mb-2">
-                                            <Search size={12} className="absolute left-2.5 top-1/2 -translate-y-1/2 text-[#6B5D4D]" />
-                                            <input
-                                              type="text"
-                                              autoFocus
-                                              placeholder="Search student by name or enrollment..."
-                                              value={quickAssignQuery}
-                                              onChange={(e) => setQuickAssignQuery(e.target.value)}
-                                              className="w-full bg-[#1A1208]/[0.03] border border-[#1A1208]/8 rounded-lg pl-8 pr-3 py-2 text-xs text-[#2A1F0F] focus:outline-none focus:border-brand/50"
-                                            />
+                                          {isExpanded ? <ChevronDown size={14} className="text-[#A89880] flex-shrink-0" /> : <ChevronRight size={14} className="text-[#A89880] flex-shrink-0" />}
+                                          <div className="w-9 h-9 sm:w-10 sm:h-10 rounded-xl bg-[#1A1208]/[0.02] border border-[#1A1208]/4 flex items-center justify-center text-brand group-hover/ev:bg-brand group-hover/ev:text-white transition-all duration-500 flex-shrink-0">
+                                            {React.createElement(categoryIcons[ev.category] || Trophy, { size: 18 })}
                                           </div>
-                                          <div className="space-y-1 max-h-40 overflow-y-auto">
-                                            {availableStudentsForEvent(ev.id)
-                                              .filter((s) => {
-                                                if (!quickAssignQuery.trim()) return true;
-                                                const q = quickAssignQuery.trim().toLowerCase();
-                                                return s.full_name.toLowerCase().includes(q) || (s.enrollment_no || '').toLowerCase().includes(q);
-                                              })
-                                              .slice(0, 15)
-                                              .map((s) => (
-                                                <button
-                                                  key={s.id}
-                                                  onClick={() => { assignStudentToEvent(s, ev.id); setQuickAssignQuery(''); }}
-                                                  className="w-full flex items-center justify-between px-3 py-2 rounded-lg text-xs text-left hover:bg-brand/10 hover:text-brand transition-all"
-                                                >
-                                                  <span className="font-medium truncate">{s.full_name}</span>
-                                                  <span className="text-[9px] text-[#6B5D4D] ml-2 flex-shrink-0">{s.enrollment_no || ''} · {getStudentEventCount(s)}/{MAX_EVENTS_PER_STUDENT}</span>
-                                                </button>
-                                              ))}
-                                            {availableStudentsForEvent(ev.id).filter((s) => {
-                                              if (!quickAssignQuery.trim()) return true;
-                                              const q = quickAssignQuery.trim().toLowerCase();
-                                              return s.full_name.toLowerCase().includes(q) || (s.enrollment_no || '').toLowerCase().includes(q);
-                                            }).length === 0 && (
-                                              <div className="text-[10px] text-[#6B5D4D] py-2 text-center">No available students found</div>
+                                          <div className="flex-1 min-w-0">
+                                            <div className="font-semibold text-xs sm:text-sm flex items-center gap-2 flex-wrap">
+                                              {ev.name} <TypeBadge event={ev} />
+                                              {incompleteTeamCount > 0 && (
+                                                <span className="px-2 py-0.5 rounded-md bg-red-500/10 border border-red-500/25 text-red-300 text-[10px] font-bold">
+                                                  {incompleteTeamCount} incomplete team(s)
+                                                </span>
+                                              )}
+                                            </div>
+                                            <div className="text-[9px] sm:text-[10px] text-[#B8A890] uppercase tracking-widest mt-0.5">{ev.category}</div>
+                                          </div>
+                                          <div className="flex items-center gap-2 sm:gap-3 text-[10px] sm:text-xs text-[#8B7D6B] flex-shrink-0 flex-col sm:flex-row">
+                                            <span className={headerFilledCount > 0 ? 'text-brand' : ''}>{headerFilledCount}</span>
+                                            <span className="text-[#C8B8A0] hidden sm:inline">{maxEntries || '∞'}</span>
+                                          </div>
+                                        </button>
+
+                                        {/* Expanded */}
+                                        {isExpanded && (
+                                          <div className="border-t border-[#1A1208]/4 p-3 sm:p-4 space-y-3 sm:space-y-4 text-xs sm:text-sm">
+                                            {/* Constraints */}
+                                            <div className="flex flex-wrap gap-1 sm:gap-2 text-[9px] sm:text-[10px]">
+                                              <span className="px-2 py-1 bg-[#1A1208]/[0.03] rounded-md text-[#A89880]">{ev.is_team ? `Group · ${limits.minTeamSize}-${limits.maxTeamSize}` : 'Solo'}</span>
+                                              <span className="px-2 py-1 bg-[#1A1208]/[0.03] rounded-md text-[#A89880]">{maxEntries || '∞'} max</span>
+                                              {(limits.maxAccompanists || 0) > 0 && <span className="px-2 py-1 bg-[#1A1208]/[0.03] rounded-md text-[#A89880]">{limits.maxAccompanists} accompanists</span>}
+                                            </div>
+
+                                            {/* Assigned */}
+                                            {eventParticipants.length > 0 && (
+                                              <div>
+                                                <div className="text-[10px] sm:text-xs font-bold text-[#8B7D6B] mb-2">Assigned ({eventParticipants.length})</div>
+                                                {ev.is_team ? (
+                                                  <div className="space-y-2 sm:space-y-3">
+                                                    {[...teamGroups.entries()].map(([teamId, members]) => (
+                                                      <div key={teamId} className={`rounded-xl p-2 sm:p-3 text-[10px] ${members.length < limits.minTeamSize ? 'bg-red-500/5 border-2 border-red-500/30' : 'bg-[#1A1208]/[0.02] border border-[#1A1208]/4'}`}>
+                                                        <div className="font-bold text-[#A89880] uppercase tracking-widest mb-1 sm:mb-2">{teamId} ({members.length}/{limits.maxTeamSize || '∞'})</div>
+                                                        {members.length < limits.minTeamSize && (
+                                                          <div className="flex items-center gap-2 mb-2 px-2 py-1.5 bg-red-500/10 border border-red-500/20 rounded-lg">
+                                                            <AlertTriangle size={12} className="text-red-400 flex-shrink-0" />
+                                                            <span className="text-[10px] font-bold text-red-300">Below minimum! Need at least {limits.minTeamSize} members - team may be disqualified</span>
+                                                          </div>
+                                                        )}
+                                                        <div className="space-y-1">
+                                                          {members.map((p) => (
+                                                            <div key={p.id} className="flex items-center justify-between text-xs py-1">
+                                                              <span className="text-[#2A1F0F]">{p.full_name} <span className="text-[#B8A890]">{p.enrollment_no || ''}</span></span>
+                                                              <button onClick={() => unassignStudentFromEvent(p.id)} className="text-red-400/50 hover:text-red-300 p-1"><Minus size={12} /></button>
+                                                            </div>
+                                                          ))}
+                                                        </div>
+                                                      </div>
+                                                    ))}
+                                                  </div>
+                                                ) : (
+                                                  <div className="space-y-1">
+                                                    {eventParticipants.map((p) => (
+                                                      <div key={p.id} className="flex items-center justify-between bg-[#1A1208]/[0.02] border border-[#1A1208]/4 rounded-lg px-2 sm:px-3 py-1.5 sm:py-2 text-[10px] sm:text-xs">
+                                                        <span className="text-[#2A1F0F] truncate">{p.full_name}</span>
+                                                        <button onClick={() => unassignStudentFromEvent(p.id)} className="text-red-400/50 hover:text-red-300 p-0.5 flex-shrink-0"><Minus size={12} /></button>
+                                                      </div>
+                                                    ))}
+                                                  </div>
+                                                )}
+                                              </div>
+                                            )}
+
+                                            {/* Add student */}
+                                            {ev.is_team && teamAssignMode?.eventId === ev.id ? (
+                                              <div className="bg-purple-500/5 border border-purple-500/20 rounded-xl p-3 sm:p-4">
+                                                <div className="flex items-center justify-between mb-2 sm:mb-3 gap-2">
+                                                  <div className="text-[10px] sm:text-xs font-bold text-purple-300"><span className="hidden sm:inline">Forming {teamAssignMode.teamId} •</span> Select {limits.minTeamSize}-{limits.maxTeamSize}</div>
+                                                  <button onClick={() => { setTeamAssignMode(null); setSelectedStudentsForTeam([]); }} className="text-[9px] sm:text-[10px] text-[#A89880] hover:text-[#1A1208] flex-shrink-0">×</button>
+                                                </div>
+                                                <div className="space-y-1 max-h-40 sm:max-h-48 overflow-y-auto mb-2 sm:mb-3">
+                                                  {availableStudentsForEvent(ev.id).map((s) => {
+                                                    const selected = selectedStudentsForTeam.includes(s.id);
+                                                    return (
+                                                      <button
+                                                        key={s.id}
+                                                        onClick={() => setSelectedStudentsForTeam((prev) => selected ? prev.filter((id) => id !== s.id) : [...prev, s.id])}
+                                                        className={`w-full flex items-center gap-2 px-3 py-2 rounded-lg text-xs text-left transition-all ${selected ? 'bg-purple-500/20 border border-purple-500/30 text-purple-200' : 'bg-[#1A1208]/[0.02] border border-[#1A1208]/4 text-[#4A3F2F] hover:border-[#1A1208]/10'}`}
+                                                      >
+                                                        <div className={`w-4 h-4 rounded border flex-shrink-0 flex items-center justify-center ${selected ? 'bg-purple-500 border-purple-500' : 'border-[#1A1208]/8'}`}>
+                                                          {selected && <Check size={10} className="text-[#1A1208]" />}
+                                                        </div>
+                                                        <span className="truncate">{s.full_name}</span>
+                                                        <span className="text-[8px] sm:text-[9px] text-[#B8A890] ml-auto flex-shrink-0">{getStudentEventCount(s)}/{MAX_EVENTS_PER_STUDENT}</span>
+                                                      </button>
+                                                    );
+                                                  })}
+                                                </div>
+                                                <div className="flex flex-col sm:flex-row items-start sm:items-center gap-2 sm:gap-3">
+                                                  <button
+                                                    onClick={() => handleBulkAssign(ev.id, selectedStudentsForTeam)}
+                                                    disabled={selectedStudentsForTeam.length < limits.minTeamSize || selectedStudentsForTeam.length > limits.maxTeamSize}
+                                                    className="btn-elite text-[10px] sm:text-xs !py-1.5 sm:!py-2 !px-3 sm:!px-4 disabled:opacity-40 w-full sm:w-auto"
+                                                  >
+                                                    Assign ({selectedStudentsForTeam.length})
+                                                  </button>
+                                                  <span className="text-[9px] sm:text-[10px] text-[#B8A890] hidden sm:inline">{selectedStudentsForTeam.length}</span>
+                                                </div>
+                                              </div>
+                                            ) : (
+                                              <div>
+                                                {ev.is_team ? (
+                                                  <div className="flex flex-wrap gap-2">
+                                                    <button
+                                                      onClick={() => {
+                                                        const maxEntries = limits.maxEntries;
+                                                        if (maxEntries > 0 && teamGroups.size >= maxEntries) {
+                                                          setAssignError(`Max ${maxEntries} team(s) reached for ${ev.name}. Add members to existing team.`);
+                                                          return;
+                                                        }
+                                                        let idx = 1;
+                                                        const usedTeams = new Set(eventParticipants.map((p) => p.team_id));
+                                                        while (usedTeams.has(`Team-${idx}`)) idx++;
+                                                        setTeamAssignMode({ eventId: ev.id, teamId: `Team-${idx}` });
+                                                        setSelectedStudentsForTeam([]);
+                                                      }}
+                                                      className="text-xs text-brand hover:text-brand/80 font-bold flex items-center gap-1 transition-colors"
+                                                    >
+                                                      <Plus size={14} /> Form New Team
+                                                    </button>
+                                                    <button
+                                                      onClick={() => { setQuickAssignEventId(quickAssignEventId === ev.id ? null : ev.id); setQuickAssignQuery(''); }}
+                                                      className="text-xs text-[#8B7D6B] hover:text-brand font-bold flex items-center gap-1 transition-colors"
+                                                    >
+                                                      <Plus size={14} /> Quick Add to Existing Team
+                                                    </button>
+                                                  </div>
+                                                ) : (
+                                                  <button
+                                                    onClick={() => { setQuickAssignEventId(quickAssignEventId === ev.id ? null : ev.id); setQuickAssignQuery(''); }}
+                                                    className="text-xs text-brand hover:text-brand/80 font-bold flex items-center gap-1 transition-colors"
+                                                  >
+                                                    <Plus size={14} /> Assign Student
+                                                  </button>
+                                                )}
+                                                {quickAssignEventId === ev.id && (
+                                                  <div className="mt-3 bg-[#1A1208]/[0.02] border border-[#1A1208]/8 rounded-xl p-3">
+                                                    <div className="relative mb-2">
+                                                      <Search size={12} className="absolute left-2.5 top-1/2 -translate-y-1/2 text-[#B8A890]" />
+                                                      <input
+                                                        type="text"
+                                                        autoFocus
+                                                        placeholder="Search student by name or enrollment..."
+                                                        value={quickAssignQuery}
+                                                        onChange={(e) => setQuickAssignQuery(e.target.value)}
+                                                        className="w-full bg-[#1A1208]/[0.03] border border-[#1A1208]/8 rounded-lg pl-8 pr-3 py-2 text-xs text-[#2A1F0F] focus:outline-none focus:border-brand/50"
+                                                      />
+                                                    </div>
+                                                    <div className="space-y-1 max-h-40 overflow-y-auto">
+                                                      {availableStudentsForEvent(ev.id)
+                                                        .filter((s) => {
+                                                          if (!quickAssignQuery.trim()) return true;
+                                                          const q = quickAssignQuery.trim().toLowerCase();
+                                                          return s.full_name.toLowerCase().includes(q) || (s.enrollment_no || '').toLowerCase().includes(q);
+                                                        })
+                                                        .slice(0, 15)
+                                                        .map((s) => (
+                                                          <button
+                                                            key={s.id}
+                                                            onClick={() => { assignStudentToEvent(s, ev.id); setQuickAssignQuery(''); }}
+                                                            className="w-full flex items-center justify-between px-3 py-2 rounded-lg text-xs text-left hover:bg-brand/10 hover:text-brand transition-all"
+                                                          >
+                                                            <span className="font-medium truncate">{s.full_name}</span>
+                                                            <span className="text-[9px] text-[#B8A890] ml-2 flex-shrink-0">{s.enrollment_no || ''} · {getStudentEventCount(s)}/{MAX_EVENTS_PER_STUDENT}</span>
+                                                          </button>
+                                                        ))}
+                                                      {availableStudentsForEvent(ev.id).filter((s) => {
+                                                        if (!quickAssignQuery.trim()) return true;
+                                                        const q = quickAssignQuery.trim().toLowerCase();
+                                                        return s.full_name.toLowerCase().includes(q) || (s.enrollment_no || '').toLowerCase().includes(q);
+                                                      }).length === 0 && (
+                                                          <div className="text-[10px] text-[#B8A890] py-2 text-center">No available students found</div>
+                                                        )}
+                                                    </div>
+                                                  </div>
+                                                )}
+                                              </div>
                                             )}
                                           </div>
-                                        </div>
-                                      )}
-                                    </div>
-                                  )}
-                                </div>
-                              )}
-                            </div>
-                          );
-                        })}
+                                        )}
+                                      </div>
+                                    );
+                                  })}
                                 </div>
                               </div>
                             );
@@ -1676,13 +1673,13 @@ const TeamLeaderDashboard = () => {
                   <div className="flex items-center justify-between mb-4">
                     <div>
                       <h3 className="text-lg font-bold">{event.name}</h3>
-                      <div className="text-xs text-[#6B5D4D] mt-1">{event.category} • {event.is_team ? `Group ${limits.minTeamSize}-${limits.maxTeamSize}` : 'Solo'}</div>
+                      <div className="text-xs text-[#A89880] mt-1">{event.category} • {event.is_team ? `Group ${limits.minTeamSize}-${limits.maxTeamSize}` : 'Solo'}</div>
                     </div>
-                    <button onClick={() => setDashboardEventDetailId(null)} className="text-[#6B5D4D] hover:text-[#1A1208]"><X size={20} /></button>
+                    <button onClick={() => setDashboardEventDetailId(null)} className="text-[#A89880] hover:text-[#1A1208]"><X size={20} /></button>
                   </div>
 
                   {eventParticipants.length === 0 ? (
-                    <div className="text-[#6B5D4D] text-sm">No participants assigned yet.</div>
+                    <div className="text-[#A89880] text-sm">No participants assigned yet.</div>
                   ) : event.is_team ? (
                     <div className="space-y-3">
                       {[...teamGroups.entries()].map(([teamId, members]) => {
@@ -1697,7 +1694,7 @@ const TeamLeaderDashboard = () => {
                             </div>
                             <div className="space-y-1">
                               {members.map((m) => (
-                                <div key={m.id} className="text-xs text-[#2A1F0F]">{m.full_name} <span className="text-[#6B5D4D]">{m.enrollment_no || ''}</span></div>
+                                <div key={m.id} className="text-xs text-[#2A1F0F]">{m.full_name} <span className="text-[#B8A890]">{m.enrollment_no || ''}</span></div>
                               ))}
                             </div>
                           </div>
@@ -1708,7 +1705,7 @@ const TeamLeaderDashboard = () => {
                     <div className="space-y-2">
                       {eventParticipants.map((p) => (
                         <div key={p.id} className="bg-[#1A1208]/[0.02] border border-[#1A1208]/8 rounded-lg px-3 py-2 text-sm text-[#1A1208]">
-                          {p.full_name} <span className="text-[#6B5D4D]">{p.enrollment_no || ''}</span>
+                          {p.full_name} <span className="text-[#B8A890]">{p.enrollment_no || ''}</span>
                         </div>
                       ))}
                     </div>
@@ -1726,7 +1723,7 @@ const TeamLeaderDashboard = () => {
           <div className="elite-glass p-6 sm:p-8 w-full max-w-3xl max-h-[85vh] overflow-y-auto">
             <div className="flex items-center justify-between mb-4">
               <h3 className="text-lg font-bold">Import Review</h3>
-              <button onClick={() => setImportReview(null)} className="text-[#6B5D4D] hover:text-[#1A1208]"><X size={20} /></button>
+              <button onClick={() => setImportReview(null)} className="text-[#A89880] hover:text-[#1A1208]"><X size={20} /></button>
             </div>
             {(() => {
               const validCount = importReview.filter((r) => !r.error).length;
@@ -1749,7 +1746,7 @@ const TeamLeaderDashboard = () => {
                     {importReview.filter((r) => r.error).map((row) => (
                       <div key={row.rowNum} className="bg-red-500/5 border border-red-500/15 rounded-xl p-3">
                         <div className="flex items-center gap-2 mb-2">
-                          <span className="text-[10px] font-bold text-[#6B5D4D] bg-[#1A1208]/[0.03] px-1.5 py-0.5 rounded">Row {row.rowNum}</span>
+                          <span className="text-[10px] font-bold text-[#B8A890] bg-[#1A1208]/[0.03] px-1.5 py-0.5 rounded">Row {row.rowNum}</span>
                           <span className="text-[10px] text-red-400 font-bold">{row.error}</span>
                         </div>
                         <div className="grid grid-cols-2 sm:grid-cols-4 gap-2">
@@ -1832,7 +1829,7 @@ const TeamLeaderDashboard = () => {
           <div className="elite-glass p-6 sm:p-8 w-full max-w-sm text-center">
             <Trash2 size={32} className="text-red-400 mx-auto mb-4" />
             <h3 className="text-lg font-bold mb-2">Delete Student?</h3>
-            <p className="text-[#4A3F2F] text-sm mb-2">
+            <p className="text-[#8B7D6B] text-sm mb-2">
               Remove <span className="text-[#1A1208] font-semibold">{deleteStudentConfirm.full_name}</span> from the roster?
             </p>
             {getStudentEventCount(deleteStudentConfirm) > 0 && (

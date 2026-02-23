@@ -29,3 +29,12 @@ build/
 # OS
 .DS_Store
 Thumbs.db
+
+# Large media files
+*.mp4
+*.mov
+*.mkv
+*.avi
+
+# Temp/debug files
+*.txt

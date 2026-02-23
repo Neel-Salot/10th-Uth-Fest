@@ -2212,7 +2212,7 @@ const Admin = ({ mode = 'admin' }: AdminProps) => {
                                                 className="flex-shrink-0"
                                               />
                                             )}
-                                            <span>{member.full_name} • {member.enrollment_no || '—'} • {member.role}</span>
+                                            <span>{member.full_name} • {member.enrollment_no || '-'} • {member.role}</span>
                                           </label>
                                           <button
                                             type="button"
@@ -2278,7 +2278,7 @@ const Admin = ({ mode = 'admin' }: AdminProps) => {
                                               className="flex-shrink-0"
                                             />
                                           )}
-                                          <span>{member.full_name} • {member.enrollment_no || '—'} • {member.role}</span>
+                                          <span>{member.full_name} • {member.enrollment_no || '-'} • {member.role}</span>
                                         </label>
                                         <div className="flex items-center gap-1 flex-shrink-0">
                                           <button
