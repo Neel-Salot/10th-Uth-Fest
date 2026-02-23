@@ -7,4 +7,6 @@ export default defineConfig({
     react(),
     tailwindcss(),
   ],
+    assetsInclude: ['**/*.MP4', '**/*.PNG'],
+
 })
