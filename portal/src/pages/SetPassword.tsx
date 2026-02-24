@@ -3,13 +3,16 @@ import { motion } from 'framer-motion';
 import { Lock, Eye, EyeOff, ShieldCheck } from 'lucide-react';
 import { updateTeamLeaderPassword, markPasswordSet } from '../lib/supabaseApi';
 
-interface SetPasswordProps {
-  teamLeaderId: string;
-  teamLeaderName: string;
+import { updateManagerUserViaRpc } from '../lib/supabaseApi';
+
+export interface SetPasswordProps {
+  userId: string;
+  userName: string;
   onPasswordSet: () => void;
+  isManager?: boolean;
 }
 
-const SetPassword = ({ teamLeaderId, teamLeaderName, onPasswordSet }: SetPasswordProps) => {
+const SetPassword = ({ userId, userName, onPasswordSet, isManager }: SetPasswordProps) => {
   const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
   const [showPassword, setShowPassword] = useState(false);
@@ -39,8 +42,13 @@ const SetPassword = ({ teamLeaderId, teamLeaderName, onPasswordSet }: SetPasswor
 
     setIsSubmitting(true);
     try {
-      await updateTeamLeaderPassword(password);
-      await markPasswordSet(teamLeaderId);
+      if (isManager) {
+        await updateManagerUserViaRpc({ userId, email: '', password });
+        // Optionally, mark must_set_password false for manager in DB if needed
+      } else {
+        await updateTeamLeaderPassword(password);
+        await markPasswordSet(userId);
+      }
       onPasswordSet();
     } catch (err: any) {
       setError(err?.message || 'Failed to set password. Please try again.');
@@ -63,7 +71,7 @@ const SetPassword = ({ teamLeaderId, teamLeaderName, onPasswordSet }: SetPasswor
           </div>
           <h1 className="text-2xl sm:text-3xl font-bold mb-2 text-center" style={{ color: '#1A1208' }}>Set Your Password</h1>
           <p className="text-sm text-center" style={{ color: '#8B7D6B' }}>
-            Welcome, <span className="text-brand font-semibold">{teamLeaderName}</span>!
+            Welcome, <span className="text-brand font-semibold">{userName}</span>!
             <br />Please set a new password for your account.
           </p>
         </div>

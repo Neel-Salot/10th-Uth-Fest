@@ -915,7 +915,7 @@ const TeamLeaderDashboard = () => {
   }
 
   if (mustSetPassword && teamLeader) {
-    return <SetPassword teamLeaderId={teamLeader.id} teamLeaderName={teamLeader.name} onPasswordSet={() => setMustSetPassword(false)} />;
+    return <SetPassword userId={teamLeader.id} userName={teamLeader.name} onPasswordSet={() => setMustSetPassword(false)} />;
   }
 
   // ═══ MAIN UI ═══

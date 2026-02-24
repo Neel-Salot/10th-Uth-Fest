@@ -1,3 +1,4 @@
+import SetPassword from './SetPassword';
 /* eslint-disable @typescript-eslint/no-unused-vars */
 import Matter from 'matter-js';
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
@@ -99,6 +100,8 @@ type AdminProps = {
 
 const MANAGER_ROLE_KEY = 'uth-manager-role';
 const Admin = ({ mode = 'admin' }: AdminProps) => {
+    const [userId, setUserId] = useState<string>('');
+    const [isAdminUser, setIsAdminUser] = useState(false);
   const isAdminMode = mode === 'admin';
   const [searchParams, setSearchParams] = useSearchParams({ tab: 'dashboard' });
   const activeTab = searchParams.get('tab') || 'dashboard';
@@ -113,6 +116,13 @@ const Admin = ({ mode = 'admin' }: AdminProps) => {
 
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [isCheckingSession, setIsCheckingSession] = useState(true);
+  // Manager password reset state
+  const [mustSetPassword, setMustSetPassword] = useState(false);
+  const [managerName, setManagerName] = useState<string | null>(null);
+
+  // ...existing state declarations...
+
+  // ...existing state declarations...
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [events, setEvents] = useState<EventRow[]>([]);
   const [institutes, setInstitutes] = useState<{ id: string; name: string; shortCode: string }[]>([]);
@@ -132,7 +142,7 @@ const Admin = ({ mode = 'admin' }: AdminProps) => {
   const [managers, setManagers] = useState<ManagerRow[]>([]);
   const [managerRole, setManagerRole] = useState<string | null>(null);
   const [managerRolesForUser, setManagerRolesForUser] = useState<string[]>([]);
-  const [isAdminUser, setIsAdminUser] = useState(false);
+
   const [managerForm, setManagerForm] = useState({ email: '', password: '', roles: ['scoring'] as string[] });
   const [managerError, setManagerError] = useState('');
   const [managerSuccess, setManagerSuccess] = useState('');

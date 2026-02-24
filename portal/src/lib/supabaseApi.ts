@@ -97,6 +97,7 @@ export type ManagerRow = {
   email: string;
   role: string;
   is_active: boolean | null;
+  must_set_password: boolean;
   created_at?: string;
 };
 
